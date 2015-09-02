@@ -1,35 +1,33 @@
 #lang plai
-;Función Potencia.
-(define pow
-  (lambda (a b)
+;Power function.
+(define (pow a b)
     (cond
       [(zero? b) 1]
       [(eq? b 1) a]
-      [else (* a (pow a (- b 1)))])))
+      [else (* a (pow a (- b 1)))]))
       
       
-;Función Average.
-(define average_aux
-  (lambda (lst t l)
+;Average function.
+(define (average_aux lst t l)
     (cond
       [(empty? lst) (floor (/ t l))]
       [else (average_aux (cdr lst) (+ (car lst) t) (+ l 1))])))
       
-(define average
-  (lambda (lst)
+(define (average lst)
     (cond
       [(empty? lst) 0]
       [else (average_aux lst 0 0)]))) 
 
-;Función zip (en revisión, aun no esta listo)
+;Zip function (not ready, yet)
 (define zip
-  (lambda (lst1 lst2) ;recibe como parametro dos listas
+  (lambda (lst1 lst2) ;recieves two lists as parameters
     (cond
-      ((empty? lst1)empty) ;si la lista 1 es vacía regresa null/vacio
-      ((empty? lst2)empty) ;si la lista 2 es vacía regresa null/vacio
-      [else (cons(list (car lst1) (car lst2)) ;si la lista tiene 2 elementos, entonces al primer elemento
-                 (zip (cdr lst1)(cdr lst2)))])));de lst1 y lst2 se pasa a la primera lista (la del lado izquierdo)
-;(car checa la cabezade la lista) y el segundo elemento de lst1 y lst2 lo deja en la segunda lista (la del lado derecho).
+      ((empty? lst1)empty) ;if the first list is empty returns the empty list
+      ((empty? lst2)empty) ;if the second list is empty returns the empty list
+      [else (cons(list (car lst1) (car lst2)) ;if the list has two elements then the first element from lst1 and the first element from lst2, 
+                 (zip (cdr lst1)(cdr lst2)))]))) ;they both go to the first list (left side list), 
+                                                 ;and taking the second elements from lst1 and lst2,
+                                                 ;they both go to the second list (right side list).
 
 
 
