@@ -82,6 +82,42 @@
     [(empty? lst) '()]
     [else (cons (f (car lst)) (mmap f (cdr lst)))]))
 
+; Given a boolean function and a list of elements, returns a sublist of the elements which meet the predicate of the function.
+(define (mfilter f lst)
+  (cond
+    [(empty? lst) '()]
+    [else (if (f (car lst))
+          (cons (car lst) (mfilter f (cdr lst)))
+          (mfilter f (cdr lst)))]))
+
+; Returns true if any of the elements contained in the list meets the predicate of the boolean function, otherwise returns false.
+(define (any? f lst)
+  (cond
+    [(empty? lst) #f]
+    [else (or (f (car lst)) (any? f (cdr lst)))]))
+
+; Returns true if each one of the elements contained in the list meets the predicate of the boolean function, otherwise returns false.
+(define (every? f lst)
+  (cond
+    [(empty? lst) #t]
+    [else (and (f (car lst)) (every? f (cdr lst)))]))
+
+;Auxiliar function for the mpowerset function
+(define (mpowerset-aux a lst)
+  (cond
+    [(empty? lst) '()]
+    [else (append
+           (list (append (list a) (car lst)))
+           (mpowerset-aux a (cdr lst)))]))
+
+;Given a list of elements, returns the power set of it.
+(define (mpowerset lst)
+  (cond
+    [(empty? lst) '(())]
+    [else (append
+           (mpowerset (cdr lst))
+           (mpowerset-aux (car lst) (mpowerset (cdr lst))))]))
+
 (test (pow 4003 0) 1)
 (test (pow 6 4) 1296)
 (test (pow 3 3) 27)
@@ -106,3 +142,17 @@
 (test (mconcat '(2 3) '(4 4 3)) '(2 3 4 4 3))
 (test (mmap car '((1 2 3) (4 5 6) (7 8 9))) '(1 4 7))
 (test (mmap cdr '((1 2 3) (4 5 6) (7 8 9))) '((2 3) (5 6) (8 9)))
+(test (mfilter (lambda (x) (not (zero? x))) '(2 0 1 4 0)) '(2 1 4))
+(test (mfilter (lambda (l) (not (empty? l))) '((1 4 2) () (2 4) ())) '((1 4 2) (2 4)))
+(test (any? number? '()) #f)
+(test (any? number? '(a b c d 1)) #t)
+(test (any? symbol? '(1 2 3 4)) #f)
+(test (every? number? '()) #t)
+(test (every? number? '(1 2 3)) #t)
+(test (every? number? '(1 2 3 a)) #f)
+(test (mpowerset '()) '(()))
+(test (mpowerset '(1)) '(() (1))) 
+(test (mpowerset '(1 2)) '(() (2) (1) (1 2)))
+(test (mpowerset '(1 2 3)) '(() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3)))
+
+
