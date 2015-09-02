@@ -106,15 +106,15 @@
 (define (mpowerset-aux a lst)
   (cond
     [(empty? lst) '()]
-    [else (append
-           (list (append (list a) (car lst)))
+    [else (mconcat
+           (list (mconcat (list a) (car lst)))
            (mpowerset-aux a (cdr lst)))]))
 
 ;Given a list of elements, returns the power set of it.
 (define (mpowerset lst)
   (cond
     [(empty? lst) '(())]
-    [else (append
+    [else (mconcat
            (mpowerset (cdr lst))
            (mpowerset-aux (car lst) (mpowerset (cdr lst))))]))
 
