@@ -21,7 +21,7 @@
       [(empty? lst) 0]
       [else (average_aux lst 0 0)]))) 
 
-;Función zip
+;Función zip (en revisión, aun no esta listo)
 (define zip
   (lambda (lst1 lst2) ;recibe como parametro dos listas
     (cond
@@ -30,3 +30,18 @@
       [else (cons(list (car lst1) (car lst2)) ;si la lista tiene 2 elementos, entonces al primer elemento
                  (zip (cdr lst1)(cdr lst2)))])));de lst1 y lst2 se pasa a la primera lista (la del lado izquierdo)
 ;(car checa la cabezade la lista) y el segundo elemento de lst1 y lst2 lo deja en la segunda lista (la del lado derecho).
+
+
+
+
+(test (pow 4003 0) 1)
+(test (pow 2 1) 1296)
+(test (pow 3 3) 27)
+(test (average '()) 0)
+(test (average '(3)) 3)
+(test (average '(2 3 2 3 5 1 9)) 3)
+(test (average '(3 4 3 5 5 12)) 5)
+(test (zip '() '()) '())
+(test (zip '(1 2 3) '(1 2 3)) '((1 1) (2 2) (3 3)))
+(test (zip '(1 2 3) '(1 2)) '((1 1) (2 2)))
+(test (zip '(1 2) '(1 2 3)) '((1 1) (2 2)))
