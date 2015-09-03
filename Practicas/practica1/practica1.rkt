@@ -184,22 +184,28 @@
 (test (mfilter (lambda (l) (not (empty? l))) '((1 4 2) () (2 4) ())) '((1 4 2) (2 4)))
 (test (mfilter (lambda (a) (eq? a 0)) '(2 0 1 4 0) ) '(0 0))
 (test (mfilter (lambda (a) (boolean? a)) '(#t #f 'false 'T 'F '#F '#T 'true)) '(#t #f))
+(test (mfilter (lambda (lst) (empty? (cddr lst))) '((1 2 3 4) (1 2 3) (77 89) (12 56 2 1) ("hola" "mi" "caja" "azul") ("soy" "lola")))
+      '((77 89) ("soy" "lola")))
 
 
 ;any? function testing
 (test (any? number? '()) #f)
 (test (any? number? '(a b c d 1)) #t)
 (test (any? symbol? '(1 2 3 4)) #f)
+(test (any? zero? '(199 2 756 0 32 9 1)) #t)
+(test (any? boolean? '(#t #f 'false 'T 'F '#F '#T 'true)) #t)
 
 ;every function testing
 (test (every? number? '()) #t)
 (test (every? number? '(1 2 3)) #t)
 (test (every? number? '(1 2 3 a)) #f)
+(test (every? zero? '(0 0 0 0 0 0 0 )) #t)
+(test (every? empty? '((0)(1 2 3)(99 0)(5 5 2)(8 72 15)(919)()(1 5 8 0 9 22))) #f)
 
 ;mpowerset function testing
 (test (mpowerset '()) '(()))
 (test (mpowerset '(1)) '(() (1))) 
 (test (mpowerset '(1 2)) '(() (2) (1) (1 2)))
 (test (mpowerset '(1 2 3)) '(() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3)))
-
+(test (mpowerset '(2 4 6 8)) '(() (8) (6) (6 8) (4) (4 8) (4 6) (4 6 8) (2) (2 8) (2 6) (2 6 8) (2 4) (2 4 8) (2 4 6) (2 4 6 8)))
 
