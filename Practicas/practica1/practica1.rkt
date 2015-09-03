@@ -59,9 +59,17 @@
     [(empty? (cddr lst)) (f (car lst) (cadr lst))] 
     [else (f (car lst) (reduce f (cdr lst)))]))
 
+;; This special function is based on the idea of operating element by element with the function received from left to right in the list.
+;; It was done thinking of the binary non-conmutative functions, such as pow or the substraction. 
+(define (reduce2 f lst)
+  (cond
+    [(empty? lst) empty]
+    [(empty? (cdr lst)) (car lst)] 
+    [else (reduce2 f (mconcat (list (f (car lst) (cadr lst))) (cddr lst)))]))
+
 ;;;;;;;; Section 2 ;;;;;;;;
 
-;Auxiliary function. Returns the reverse of a list
+;Auxiliary function. Returns the reverse of a list 
  (define (rreverse lst1 lst2)
    (cond
      [(empty? lst1) lst2]     
@@ -153,8 +161,9 @@
 ;Reduce function testing
 (test (reduce + '(1 2 3 4 5 6 7)) 28)
 (test (reduce zip '((1 2 3) (4 5 6) (7 8 9))) '((1 (4 7)) (2 (5 8)) (3 (6 9))))
-;(test (reduce pow '(1 2 3 4)) 1)
-(test (reduce - '(74 3 1 8 12)) 50)
+(test (reduce2 pow '(2 2 3 4 7 0 3 2 33)) 1)
+(test (reduce2 - '(74 3 1 8 12)) 50)
+(test (reduce2 zip '((1 2 3) (4 5 6) (7 8 9))) '(((1 4) 7) ((2 5) 8) ((3 6) 9)))
 
 ;mconcat function testing
 (test (mconcat '(1 2 3) '(4 5 6)) '(1 2 3 4 5 6))
@@ -166,10 +175,16 @@
 ;mmap function testing
 (test (mmap car '((1 2 3) (4 5 6) (7 8 9))) '(1 4 7))
 (test (mmap cdr '((1 2 3) (4 5 6) (7 8 9))) '((2 3) (5 6) (8 9)))
+(test (mmap average '((5 6 10 9 8 12 11 7) (3 2 6 2 1 7 2 1))) '(8 3))
+(test (mmap primes '(30 11 1)) '((2 3 5 7 11 13 17 19 23 29) (2 3 5 7 11) ()))
+(test (mmap last '((5 6 10 9 8 12 11 7) (3 2 6 2 1 7 2 1))) '(7 1))
 
 ;mfilter function testing
 (test (mfilter (lambda (x) (not (zero? x))) '(2 0 1 4 0)) '(2 1 4))
 (test (mfilter (lambda (l) (not (empty? l))) '((1 4 2) () (2 4) ())) '((1 4 2) (2 4)))
+(test (mfilter (lambda (a) (eq? a 0)) '(2 0 1 4 0) ) '(0 0))
+(test (mfilter (lambda (a) (boolean? a)) '(#t #f 'false 'T 'F '#F '#T 'true)) '(#t #f))
+
 
 ;any? function testing
 (test (any? number? '()) #f)
