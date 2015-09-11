@@ -76,6 +76,9 @@
 (test (setvalueA (MArray 5 '(0 0 0 0 0)) 2 4) (MArray 5 '(0 0 4 0 0)))
 (test (setvalueA (MArray 5 '(0 0 0 0 0)) 4 4) (MArray 5 '(0 0 0 0 4)))
 (test/exn (setvalueA (MArray 5 '(0 0 0 0 0)) 5 4) "Out of bounds")
+(test (setvalueA (MArray 5 '(0 0 0 0 0)) 3 4) (MArray 5 '(0 0 0 4 0)))
+(test (setvalueA (MArray 5 '(0 0 0 0 0)) 1 4) (MArray 5 '(0 4 0 0 0)))
+
 
 (define (list2MList lst)
   (cond
