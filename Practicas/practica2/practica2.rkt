@@ -154,7 +154,9 @@
       (MCons 8 (MCons 5 (MEmpty))))
 (test (mapML (lambda (x) (* x x)) (MCons 10 (MCons 3 (MEmpty))))
       (MCons 100 (MCons 9 (MEmpty))))
-
+      
+;Given a list of MLista type and a predicate of one argument, return a list of such MLista
+;without the elements that applying the predicate returns false
 (define (filterML p lst)
   (type-case MList lst
              [MEmpty () (MEmpty)]
@@ -190,6 +192,7 @@
 (define plazas (MCons plaza-satelite (MCons plaza-perisur (MEmpty))))
 
 ;;Haversine
+;Given two values GPS type Calculate the distance between two places
 (define (haversine l1 l2)
   (define R 6371)
   (define a (haversine-aux l1 l2))
@@ -202,13 +205,13 @@
   (define lat-diff (to-radians (- (GPS-lat l2) (GPS-lat l1))))
   (define long-diff (to-radians (- (GPS-long l2) (GPS-long l1))))
   (+ (sqr (sin (/ lat-diff 2))) (* (cos lat1) (* (cos lat2) (sqr (/ long-diff 2))))))
-
+;conver to radians
 (define (to-radians v)
   (/ (* v pi) 180))
 
 (test (haversine gps-ciencias gps-zocalo) 13.033219276117368)
 (test (haversine gps-ciencias gps-perisur) 2.44727738966455)
-
+;Given a list of buildings, return the list of GPS coordinates of buildings
 (define (gps-coordinates lst)  
   (type-case MList lst
              [MEmpty () (MEmpty)]
@@ -220,7 +223,7 @@
 (test (gps-coordinates (MEmpty)) (MEmpty))
 (test (gps-coordinates plazas) (MCons (GPS 19.510482 -99.23411900000002)
                                       (MCons (GPS 19.304135 -99.19001000000003) (MEmpty))))
-
+;calculate the distance between 2 points.
 (define (distance x y x1 y1) (sqrt (+ (* (- x x1) (- x x1)) (* (- y y1) (- y y1)))))
 
 (define (dist-loc b1 b2)
@@ -229,7 +232,7 @@
                        (type-case Location b2
                                   [building (n2 gps2)
                                             (haversine gps1 gps2)])]))
-
+;aux for closest-building
 (define (closest-building-aux b lst s)
   (type-case MList lst
              [MEmpty () s]
@@ -239,14 +242,14 @@
                       [(eq? b1 b) (closest-building-aux b l s)]                      
                       [(< (dist-loc b b1) (dist-loc b s)) (closest-building-aux b l b1)]
                       [else (closest-building-aux b l s)])]))
-
+;given b a value of type building and a list of type MList of buildings , return the nearest building a,b
 (define (closest-building b lst)
   (closest-building-aux b lst null))
 (test (closest-building zocalo plazas)
       (building "Plaza Satelite" (GPS 19.510482 -99.23411900000002)))
 (test (closest-building ciencias plazas)
       (building "Plaza Perisur" (GPS 19.304135 -99.19001000000003)))
-
+;distance between buildings
 (define (buildings-at-distance b lst d)
   (type-case MList lst
              [MEmpty () (MEmpty)]
@@ -262,7 +265,7 @@
 (test (buildings-at-distance ciencias plazas 25)
       (MCons (building "Plaza Satelite" (GPS 19.510482 -99.23411900000002))
              (MCons (building "Plaza Perisur" (GPS 19.304135 -99.19001000000003)) (MEmpty))))
-
+;Given a figure of the type Figure, returning the area of the figure,
 (define (area fig)
   (type-case Figure fig
              [Circle (c r) (* pi (* r r))]
@@ -272,7 +275,7 @@
 (test (area (Circle (2D-Point 5 5) 4)) 50.26548245743669)
 (test (area (Square (2D-Point 0 0) 20)) 400)
 (test (area (Rectangle (2D-Point 3 4) 5 10)) 50)
-
+;aux for in-figure?
 (define (quad-in-figure x y x1 y1 a l)
   (and
    (and (>= x x1) (<= x (+ x1 l)))
@@ -280,7 +283,9 @@
 
 (define (circ-in-figure x y x1 y1 r)  
   (<= (distance x y x1 y1) r))
-
+  
+;Given a figure type Figure and a position p type 2D - Point
+;returns #t if p is within fig and otherwise #f
 (define (in-figure? fig pos)
   (type-case Position pos
              [2D-Point (x y)
