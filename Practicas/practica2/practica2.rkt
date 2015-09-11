@@ -29,6 +29,7 @@
                  (and (list? x) (<= (length x) z))))]);list? Returns #t if v is a list either the empty list, 
 ; or a pair whose second element is a list.
 (test (MArray 4 '(1 2 3)) (MArray 4 '(1 2 3)))
+(test (MArray 2 '()) (MArray 2 '()))
 
 (define (atom? x);Determines whether or not a value is a number, a symbol, or a string.
   (not (pair? x)));is the pair containing s as the car and t as the cdr
@@ -39,6 +40,7 @@
   [MCons (num atom?) (lst MList?)]);MCons is the MList constructor 
 (test (MEmpty) (MEmpty))
 (test (MCons 1 (MCons 2 (MCons 3 (MEmpty)))) (MCons 1 (MCons 2 (MCons 3 (MEmpty)))))
+(test (MCons 7  (MCons (MCons 1 (MCons 2 (MEmpty))) (MCons 6 (MEmpty)))) (MCons 7  (MCons (MCons 1 (MCons 2 (MEmpty))) (MCons 6 (MEmpty)))))
 
 ;Is a data type with a null leaf TLEmpty and a type constructor Noden
 (define-type NTree 
@@ -47,12 +49,15 @@
 (test (TLEmpty) (TLEmpty))
 (test (NodeN 1 (list (TLEmpty) (TLEmpty) (TLEmpty)))
       (NodeN 1 (list (TLEmpty) (TLEmpty) (TLEmpty))))
+(test (NodeN "a" (list (NodeN "b" (list (TLEmpty))) (NodeN "c" (list (TLEmpty)))))
+      (NodeN "a" (list (NodeN "b" (list (TLEmpty))) (NodeN "c" (list (TLEmpty))))))
 
 ;this function indicates a position in the Cartesian plane
 (define-type Position
   [2D-Point (x number?) (y number?)])
 (test (2D-Point 0 0) (2D-Point 0 0))
 (test (2D-Point 1 (sqrt 2)) (2D-Point 1 1.4142135623730951))
+(test (2D-Point 0.991234 (/ 3 (* 4556 pi))) (2D-Point 0.991234 0.0002095982569252353))
 
 ;define geometric figures
 (define-type Figure
@@ -62,6 +67,7 @@
 (test (Circle (2D-Point 2 2) 2) (Circle (2D-Point 2 2) 2))
 (test (Square (2D-Point 0 3) 3) (Square (2D-Point 0 3) 3))
 (test (Rectangle (2D-Point 0 2) 2 3) (Rectangle (2D-Point 0 2) 2 3))
+(test (Square (2D-Point (sqrt 144) 99) 11) (Square (2D-Point 12 99 ) 11))
 
 ;; Seccion II
 
@@ -135,6 +141,10 @@
       (MCons 7 (MCons 4 (MCons 1 (MEmpty)))))
 (test (concatML (MCons 7 (MCons 4 (MEmpty))) (MCons 1 (MCons 10 (MEmpty))))
       (MCons 7 (MCons 4 (MCons 1 (MCons 10 (MEmpty))))))
+(test (concatML (MCons 7 (MCons (MCons 1 (MCons 2 (MEmpty))) (MCons 6 (MEmpty))))
+                (MCons (MCons 1 (MCons 2 (MEmpty))) (MCons (MCons 2 (MCons 3 (MEmpty))) (MEmpty))))
+      (MCons 7 (MCons (MCons 1 (MCons 2 (MEmpty))) (MCons 6 (MCons (MCons 1 (MCons 2 (MEmpty)))
+                                                                   (MCons (MCons 2 (MCons 3 (MEmpty))) (MEmpty)))))))
 
 ;Given a list of MLista type, returning the number of elements that have
 (define (lengthML lst)
@@ -143,6 +153,7 @@
              [MCons (n l) (+ 1 (lengthML l))]))
 (test (lengthML (MEmpty)) 0)
 (test (lengthML (MCons 7 (MCons 4 (MEmpty)))) 2)
+(test (lengthML (MCons (MCons 1 (MCons 2 (MEmpty))) (MCons (MCons 2 (MCons 3 (MEmpty))) (MEmpty)))) 2)
 
 ;Given a list of MLista type and a function of arity 1 return a list of the type MLista
 ;applying the function to each element of the original list
@@ -154,7 +165,9 @@
       (MCons 8 (MCons 5 (MEmpty))))
 (test (mapML (lambda (x) (* x x)) (MCons 10 (MCons 3 (MEmpty))))
       (MCons 100 (MCons 9 (MEmpty))))
-      
+(test (mapML (lambda (x) (sqrt x)) (MCons 144 (MCons 9 (MEmpty))))
+      (MCons 12 (MCons 3 (MEmpty))))
+
 ;Given a list of MLista type and a predicate of one argument, return a list of such MLista
 ;without the elements that applying the predicate returns false
 (define (filterML p lst)
@@ -170,7 +183,11 @@
 (test (filterML (lambda (l) (not (MEmpty? l)))
                 (MCons (MCons 1 (MCons 4 (MEmpty))) (MCons (MEmpty) (MCons 1 (MEmpty)))))
       (MCons (MCons 1 (MCons 4 (MEmpty))) (MCons 1 (MEmpty))))
+(test (filterML (lambda (x) (eq?  x 1))
+                (MCons 7  (MCons (MCons 1 (MCons 2 (MEmpty))) (MCons 6 (MEmpty)))))
+      (MEmpty))
 
+;; Some definitions ;;
 (define-type Coordinates
   [GPS (lat number?)
        (long number?)])
@@ -190,6 +207,8 @@
 (define zocalo (building "Zocalo" gps-zocalo))
 (define plaza-perisur (building "Plaza Perisur" gps-perisur))
 (define plazas (MCons plaza-satelite (MCons plaza-perisur (MEmpty))))
+(define historicos (MCons zocalo (MEmpty))) 
+(define escuelas (MCons ciencias (MEmpty))) 
 
 ;;Haversine
 ;Given two values GPS type Calculate the distance between two places
@@ -211,6 +230,8 @@
 
 (test (haversine gps-ciencias gps-zocalo) 13.033219276117368)
 (test (haversine gps-ciencias gps-perisur) 2.44727738966455)
+(test (haversine gps-satelite gps-zocalo) 13.65356369713)
+
 ;Given a list of buildings, return the list of GPS coordinates of buildings
 (define (gps-coordinates lst)  
   (type-case MList lst
@@ -223,6 +244,9 @@
 (test (gps-coordinates (MEmpty)) (MEmpty))
 (test (gps-coordinates plazas) (MCons (GPS 19.510482 -99.23411900000002)
                                       (MCons (GPS 19.304135 -99.19001000000003) (MEmpty))))
+(test (gps-coordinates escuelas) (MCons (GPS 19.3239411016 -99.179806709) (MEmpty))) 
+(test (gps-coordinates historicos) (MCons (GPS 19.432721893261117 -99.13332939147949) (MEmpty)))
+      
 ;calculate the distance between 2 points.
 (define (distance x y x1 y1) (sqrt (+ (* (- x x1) (- x x1)) (* (- y y1) (- y y1)))))
 
