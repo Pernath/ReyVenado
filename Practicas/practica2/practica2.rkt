@@ -94,7 +94,7 @@
 (test (MArray2MList (MArray 4 '(1 2 3 4))) (MCons 1 (MCons 2 (MCons 3 (MCons 4 (MEmpty))))))
 (test (MArray2MList (MArray 7 '(1 2 3 4 5 6 7))) (MCons 1 (MCons 2 (MCons 3 (MCons 4 (MCons 5 (MCons 6 (MCons 7(MEmpty)))))))))
 
-
+;Given a list of type MList, print it in a readable format.
 (define (printML mlst)
   (type-case MList mlst
              [MEmpty () "[]"]
