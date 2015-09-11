@@ -79,7 +79,7 @@
 (test (setvalueA (MArray 5 '(0 0 0 0 0)) 3 4) (MArray 5 '(0 0 0 4 0)))
 (test (setvalueA (MArray 5 '(0 0 0 0 0)) 1 4) (MArray 5 '(0 4 0 0 0)))
 
-
+;given a type data MArray, Return a list type MList Containing all elements of the original array.
 (define (list2MList lst)
   (cond
     [(empty? lst) (MEmpty)]
