@@ -89,7 +89,10 @@
 (test (setvalueA (MArray 5 '(0 0 0 0 0)) 2 4) (MArray 5 '(0 0 4 0 0)))
 (test (setvalueA (MArray 5 '(0 0 0 0 0)) 4 4) (MArray 5 '(0 0 0 0 4)))
 (test/exn (setvalueA (MArray 5 '(0 0 0 0 0)) 5 4) "Out of bounds")
+(test (setvalueA (MArray 5 '(0 0 0 0 0)) 3 4) (MArray 5 '(0 0 0 4 0)))
+(test (setvalueA (MArray 5 '(0 0 0 0 0)) 1 4) (MArray 5 '(0 4 0 0 0)))
 
+;given a type data MArray, Return a list type MList Containing all elements of the original array.
 (define (list2MList lst)
   (cond
     [(empty? lst) (MEmpty)]
@@ -104,7 +107,7 @@
 (test (MArray2MList (MArray 4 '(1 2 3 4))) (MCons 1 (MCons 2 (MCons 3 (MCons 4 (MEmpty))))))
 (test (MArray2MList (MArray 7 '(1 2 3 4 5 6 7))) (MCons 1 (MCons 2 (MCons 3 (MCons 4 (MCons 5 (MCons 6 (MCons 7(MEmpty)))))))))
 
-
+;Given a list of type MList, print it in a readable format.
 (define (printML mlst)
   (type-case MList mlst
              [MEmpty () "[]"]
@@ -129,7 +132,7 @@
                       (MCons (MCons 2 (MCons 3 (MEmpty))) (MEmpty)))) "[[1, 2], [2, 3]]")
 (test (printML (MCons 7  (MCons (MCons 1 (MCons 2 (MEmpty)))
                                 (MCons 6 (MEmpty))))) "[7, [1, 2], 6]")
-
+;Given two lists type MList, Back concatenation.
 (define (concatML lst1 lst2)
   (type-case MList lst1
              [MEmpty () lst2]
@@ -139,14 +142,15 @@
       (MCons 7 (MCons 4 (MCons 1 (MEmpty)))))
 (test (concatML (MCons 7 (MCons 4 (MEmpty))) (MCons 1 (MCons 10 (MEmpty))))
       (MCons 7 (MCons 4 (MCons 1 (MCons 10 (MEmpty))))))
-
+;Given a list of MLista type, returning the number of elements that have
 (define (lengthML lst)
   (type-case MList lst
              [MEmpty () 0]
              [MCons (n l) (+ 1 (lengthML l))]))
 (test (lengthML (MEmpty)) 0)
 (test (lengthML (MCons 7 (MCons 4 (MEmpty)))) 2)
-
+;Given a list of MLista type and a function of arity 1 return a list of the type MLista
+;applying the function to each element of the original list
 (define (mapML f lst)
   (type-case MList lst
              [MEmpty () (MEmpty)]
