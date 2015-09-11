@@ -118,7 +118,7 @@
                       (MCons (MCons 2 (MCons 3 (MEmpty))) (MEmpty)))) "[[1, 2], [2, 3]]")
 (test (printML (MCons 7  (MCons (MCons 1 (MCons 2 (MEmpty)))
                                 (MCons 6 (MEmpty))))) "[7, [1, 2], 6]")
-
+;Given two lists type MList, Back concatenation.
 (define (concatML lst1 lst2)
   (type-case MList lst1
              [MEmpty () lst2]
@@ -127,14 +127,15 @@
       (MCons 7 (MCons 4 (MCons 1 (MEmpty)))))
 (test (concatML (MCons 7 (MCons 4 (MEmpty))) (MCons 1 (MCons 10 (MEmpty))))
       (MCons 7 (MCons 4 (MCons 1 (MCons 10 (MEmpty))))))
-
+;Given a list of MLista type, returning the number of elements that have
 (define (lengthML lst)
   (type-case MList lst
              [MEmpty () 0]
              [MCons (n l) (+ 1 (lengthML l))]))
 (test (lengthML (MEmpty)) 0)
 (test (lengthML (MCons 7 (MCons 4 (MEmpty)))) 2)
-
+;Given a list of MLista type and a function of arity 1 return a list of the type MLista
+;applying the function to each element of the original list
 (define (mapML f lst)
   (type-case MList lst
              [MEmpty () (MEmpty)]
