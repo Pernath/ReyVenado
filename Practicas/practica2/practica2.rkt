@@ -8,6 +8,7 @@
 ;;;;; Karla Esquivel ;;;;;
 ;;;;; Carlos Acosta ;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;print-only-errors when this flag is set to #t, only tests that fail will be printed.
 (print-only-errors true)
 
@@ -18,6 +19,7 @@
     [else (and (f (car lst)) (every? f (cdr lst)))]))
 
 (define z null)
+
 ;MArray defines size of an array
 (define-type Array
   [MArray (num (lambda (x)
@@ -30,12 +32,14 @@
 
 (define (atom? x);Determines whether or not a value is a number, a symbol, or a string.
   (not (pair? x)));is the pair containing s as the car and t as the cdr
+
 ;MList is a Type recursive data 
 (define-type MList
   [MEmpty];When MList is empty
   [MCons (num atom?) (lst MList?)]);MCons is the MList constructor 
 (test (MEmpty) (MEmpty))
 (test (MCons 1 (MCons 2 (MCons 3 (MEmpty)))) (MCons 1 (MCons 2 (MCons 3 (MEmpty)))))
+
 ;Is a data type with a null leaf TLEmpty and a type constructor Noden
 (define-type NTree 
   [TLEmpty];leaf is empty.
@@ -43,11 +47,13 @@
 (test (TLEmpty) (TLEmpty))
 (test (NodeN 1 (list (TLEmpty) (TLEmpty) (TLEmpty)))
       (NodeN 1 (list (TLEmpty) (TLEmpty) (TLEmpty))))
+
 ;this function indicates a position in the Cartesian plane
 (define-type Position
   [2D-Point (x number?) (y number?)])
 (test (2D-Point 0 0) (2D-Point 0 0))
 (test (2D-Point 1 (sqrt 2)) (2D-Point 1 1.4142135623730951))
+
 ;define geometric figures
 (define-type Figure
   [Circle (c Position?) (r number?)]
@@ -58,6 +64,7 @@
 (test (Rectangle (2D-Point 0 2) 2 3) (Rectangle (2D-Point 0 2) 2 3))
 
 ;; Seccion II
+
 ;auxiliary method for function setValueA (change value)
 (define (changeVal lst p v a)
   (cond
@@ -118,6 +125,7 @@
                       (MCons (MCons 2 (MCons 3 (MEmpty))) (MEmpty)))) "[[1, 2], [2, 3]]")
 (test (printML (MCons 7  (MCons (MCons 1 (MCons 2 (MEmpty)))
                                 (MCons 6 (MEmpty))))) "[7, [1, 2], 6]")
+
 ;Given two lists type MList, Back concatenation.
 (define (concatML lst1 lst2)
   (type-case MList lst1
@@ -127,6 +135,7 @@
       (MCons 7 (MCons 4 (MCons 1 (MEmpty)))))
 (test (concatML (MCons 7 (MCons 4 (MEmpty))) (MCons 1 (MCons 10 (MEmpty))))
       (MCons 7 (MCons 4 (MCons 1 (MCons 10 (MEmpty))))))
+
 ;Given a list of MLista type, returning the number of elements that have
 (define (lengthML lst)
   (type-case MList lst
@@ -134,6 +143,7 @@
              [MCons (n l) (+ 1 (lengthML l))]))
 (test (lengthML (MEmpty)) 0)
 (test (lengthML (MCons 7 (MCons 4 (MEmpty)))) 2)
+
 ;Given a list of MLista type and a function of arity 1 return a list of the type MLista
 ;applying the function to each element of the original list
 (define (mapML f lst)
@@ -144,7 +154,6 @@
       (MCons 8 (MCons 5 (MEmpty))))
 (test (mapML (lambda (x) (* x x)) (MCons 10 (MCons 3 (MEmpty))))
       (MCons 100 (MCons 9 (MEmpty))))
-
 
 (define (filterML p lst)
   (type-case MList lst
@@ -179,8 +188,6 @@
 (define zocalo (building "Zocalo" gps-zocalo))
 (define plaza-perisur (building "Plaza Perisur" gps-perisur))
 (define plazas (MCons plaza-satelite (MCons plaza-perisur (MEmpty))))
-
-
 
 ;;Haversine
 (define (haversine l1 l2)
@@ -219,13 +226,9 @@
 (define (dist-loc b1 b2)
   (type-case Location b1
              [building (n1 gps1)
-                       (type-case Coordinates gps1
-                                  [GPS (x1 y1)
-                                       (type-case Location b2
-                                                  [building (n2 gps2)
-                                                            (type-case Coordinates gps2
-                                                                       [GPS (x2 y2)
-                                                                            (distance x1 y1 x2 y2)])])])]))
+                       (type-case Location b2
+                                  [building (n2 gps2)
+                                            (haversine gps1 gps2)])]))
 
 (define (closest-building-aux b lst s)
   (type-case MList lst
@@ -249,12 +252,12 @@
              [MEmpty () (MEmpty)]
              [MCons (b1 l)
                     (cond
-                      [(<= (* 100 (dist-loc b b1)) d) (MCons b1 (buildings-at-distance b l d))]
+                      [(<= (dist-loc b b1) d) (MCons b1 (buildings-at-distance b l d))]
                       [else (buildings-at-distance b l d)])]))
 
 (test (buildings-at-distance ciencias plazas 10)
       (MCons (building "Plaza Perisur" (GPS 19.304135 -99.19001000000003)) (MEmpty)))
-(test (buildings-at-distance ciencias plazas 19)
+(test (buildings-at-distance ciencias plazas 20)
       (MCons (building "Plaza Perisur" (GPS 19.304135 -99.19001000000003)) (MEmpty)))
 (test (buildings-at-distance ciencias plazas 25)
       (MCons (building "Plaza Satelite" (GPS 19.510482 -99.23411900000002))
