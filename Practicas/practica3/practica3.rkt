@@ -3,7 +3,7 @@
 (require "practica3-base.rkt")
 
 (define (zones rheart-rate mheart-rate)  
-  (define mrange (- mheart-rate rheart-rate)) ;; esta es la linea que debemos modificar? cómo debemos hacerlo @hectoregm?
+  (define mrange (- mheart-rate rheart-rate)) ;; esta es la linea que debemos modificar? cómo debemos hacerlo @hectoregm ?
   (list
       (resting rest (- (* rheart-rate 0.5) 1))
       (warm-up (aux-min rheart-rate mrange 1) (aux-max rheart-rate mrange 1))
