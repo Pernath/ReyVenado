@@ -5,11 +5,11 @@
 
 ;;;;Section I. Heart Rate Zones;;;;
 
-;;Auxiliary function that calculates the minimum of the heart-rate according to the zone
+;; Auxiliary function that calculates the minimum of the heart-rate according to the zone
 (define (aux-min rheart-rate mrange i)
   (+ rheart-rate (* mrange (+ 0.5 (* 0.1 (- i 1))))))
 
-;;Auxiliary function that calculates the maximum of the heart-rate according to the zone
+;; Auxiliary function that calculates the maximum of the heart-rate according to the zone
 (define (aux-max rheart-rate mrange i)
   (- (+ rheart-rate (* mrange (+ 0.5 (* 0.1 i)))) 1))
 
@@ -26,7 +26,7 @@
    (anaerobic  (aux-min rheart-rate mrange 4) (aux-max rheart-rate mrange 4))
    (maximum (aux-min rheart-rate mrange 5) (aux-max rheart-rate mrange 5))))
 
-;;;; zones function testing;;;;
+;;;; zones function testing ;;;;
 (test (zones 50 180)
       (list
        (resting 50 114.0)
@@ -72,7 +72,7 @@
 ; This definition is for testing purposes
 (define my-zones (zones 50 180))
 
-;; 2
+;; 2.
 ; Given the name of a heart-rate zone, this function returns the HRZ (heart-rate zone) 
 ; corresponding
 (define (get-zone sym zlst)
@@ -84,7 +84,7 @@
     [(eq? sym 'anaerobic) (first (cddddr zlst))]
     [(eq? sym 'maximum) (second (cddddr zlst))]))
 
-;;   get-zone function testing
+;; get-zone function testing
 (test (get-zone 'anaerobic my-zones) (anaerobic 154.0 166.0))
 (test (get-zone 'maximum my-zones) (maximum 167.0 179.0))
 (test (get-zone 'fat-burning my-zones) (fat-burning 128.0 140.0))
@@ -205,7 +205,7 @@
     [(empty? lst) 0]
     [else (haversine (trackpoint-loc ent) (trackpoint-loc (car lst)))]))
 
-;; 5
+;; 5.
 ; Given a trackpoints list, returns the traveled distance
 (define (total-distance lst)
   (cond
@@ -226,7 +226,7 @@
       [(empty? lst) 0]
       [else (+ (trackpoint-hr (car lst)) (sum-all (cdr lst)))]))
       
-;; 6
+;; 6.
 ; Given a trackpoints list, returns the average heart rate
 (define (average-hr lst)
   (cond
@@ -246,7 +246,7 @@
     [(>= m (trackpoint-hr (car lst))) (max-aux m (cdr lst))]
     [else (max-aux (trackpoint-hr (car lst)) (cdr lst))]))
 
-;; 7
+;; 7.
 ; Given a trackpoints list, returns the highest heart rate
 (define (max-hr lst)
   (max-aux 0 lst))
@@ -266,7 +266,7 @@
           (collapse-aux (cdr lst) e (car lst))]
      [else (cons ltp (collapse-aux (cdr lst) e (car lst)))]))
 
-;; 8
+;; 8.
 ; Given a trackpoints list and an e epsilon, returns a new list with
 ; collapsed consecutive elements such that each element in a collapsed set
 ; has the same heart rate and the distance between each consecutive point 
@@ -330,3 +330,17 @@
 (test (preorderBT bt2) '(3 4 5 8 3))
 (test (preorderBT bt3) '("f" "c" "h" "ahhh" "dd" "as"))
 (test (preorderBT bt4) '("eeeeeee" "ee" "e" "eee" "eeeee" "eeee" "eeeeee" "eeeeeeee"))
+
+;; 14.
+; Returns a list of the elements of a binary tree in-order
+(define (inorderBT bt)
+  (type-case BTree bt
+    [EmptyBT () '()]
+    [BNode (c l e r) (append (inorderBT l) (cons e (inorderBT r)))]))
+
+(test (inorderBT arbol-base) '("A" "B" "C" "D" "E" "F" "G" "H" "I"))
+(test (inorderBT (EmptyBT)) '())
+(test (inorderBT bt1) '(1 2 3 4 5))
+(test (inorderBT bt2) '(5 4 8 3 3))
+(test (inorderBT bt3) '("h" "c" "ahhh" "f" "as" "dd"))
+(test (inorderBT bt4) '("e" "ee" "eee" "eeee" "eeeee" "eeeeee" "eeeeeee" "eeeeeeee"))
