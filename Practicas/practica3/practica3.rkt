@@ -312,15 +312,11 @@
         (trackpoint (GPS 19.4913761 -99.2423724) 130 (fat-burning 128.0 140.0) 1425619735)
         (trackpoint (GPS 19.4914257 -99.2424697) 131 (fat-burning 128.0 140.0) 1425619740))))
 
-#lang plai
+
 
 ;;;;;;;;;;Section II. Arboles Binarios;;;;;;;;;;
 
 
-
-;;9
-;;Use a Data type BTree, The first parameter of type bnode builder is a comparison function 
-;that takes two arguments and returns a Boolean indicating whether the first argument is less than the second.
 (define bt1 (bnn ebt 1 (bnn ebt 2 (bnn ebt 3 (bnn ebt 4 (bnn ebt 5 ebt))))))
 (define bt2 (bnn (bnn (bnn ebt 5 ebt) 4 (bnn ebt 8 ebt)) 3 (bnn ebt 3 ebt)))
 (define bt3 (bns (bns (bns ebt "h" ebt) "c" (bns ebt "ahhh" ebt)) "f"
@@ -329,11 +325,12 @@
                                                              (bns ebt "eeee" ebt) "eeeee"
                                                              (bns ebt "eeeeee" ebt)))) "eeeeeee"
                                                              (bns ebt "eeeeeeee" ebt)))
+
 ;auxiliary method
 (define (ninSubt l r)
   (if (and (EmptyBT? l) (EmptyBT? r)) 0 (+ 1 (+ (ninBT l) (ninBT r))))) 
 
-;10
+;9
 ;ninBT: Given a tree BTree type , function that returns the number of nodes in the tree.
 (define (ninBT bt)
   (type-case BTree bt
@@ -352,7 +349,7 @@
 (define (nlSubt l r)
   (if (and (EmptyBT? l) (EmptyBT? r)) 1 (+ (nlBT l) (nlBT r))))
 
-;11
+;10
 ;nlBT: Given a tree BTree, Determines the number of empty leaves.
 (define (nlBT bt)
   (type-case BTree bt
@@ -367,7 +364,7 @@
 (test (nlBT bt3) 3)
 (test (nlBT bt4) 4)
 
-;12
+;11
 ;nnBT: determine the number of nodes in a tree not counting empty leaves.
 (define (nnBT bt)
   (type-case BTree bt
@@ -382,7 +379,7 @@
 (test (nnBT bt3) 6)
 (test (nnBT bt4) 8)
 
-;13
+;12
 ;mapBT: Given a function with arity 1 an tree BTree, apply the function on every value in the nodes of the tree.
 (define (mapBT f bt)
   (type-case BTree bt
@@ -400,7 +397,7 @@
 
 ;;;;;;;;;; Tree Traversals ;;;;;;;;;;
 
-;; 14.
+;; 13.
 ; Given a binary tree instance, returns the elements contained in it, visiting each one of 
 ; them with a pre-order tree traversal.
 (define (preorderBT bt)
@@ -415,7 +412,7 @@
 (test (preorderBT bt3) '("f" "c" "h" "ahhh" "dd" "as"))
 (test (preorderBT bt4) '("eeeeeee" "ee" "e" "eee" "eeeee" "eeee" "eeeeee" "eeeeeeee"))
 
-;; 15.
+;; 14.
 ; Returns a list of the elements of a binary tree in-order
 (define (inorderBT bt)
   (type-case BTree bt
@@ -429,7 +426,7 @@
 (test (inorderBT bt3) '("h" "c" "ahhh" "f" "as" "dd"))
 (test (inorderBT bt4) '("e" "ee" "eee" "eeee" "eeeee" "eeeeee" "eeeeeee" "eeeeeeee"))
 
-;16
+;15
 ;PostOrder: Returns a list of the elements of a binary tree in post-order
 (define (posorderBT bt)
   (type-case BTree bt
