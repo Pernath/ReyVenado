@@ -311,3 +311,22 @@
         (trackpoint (GPS 19.4913238 -99.2422883) 128 (fat-burning 128.0 140.0) 1425619731)
         (trackpoint (GPS 19.4913761 -99.2423724) 130 (fat-burning 128.0 140.0) 1425619735)
         (trackpoint (GPS 19.4914257 -99.2424697) 131 (fat-burning 128.0 140.0) 1425619740))))
+
+
+
+;;;;;;;;;; Tree Traversals ;;;;;;;;;;
+
+;; 13.
+; Given a binary tree instance, returns the elements contained in it, visiting each one of 
+; them with a pre-order tree traversal.
+(define (preorderBT bt)
+  (type-case BTree bt
+             [EmptyBT () '()]
+             [BNode (c l e r) (cons e (append (preorderBT l) (preorderBT r)))]))
+
+(test (preorderBT arbol-base) '("F" "B" "A" "D" "C" "E" "G" "I" "H"))
+(test (preorderBT (EmptyBT)) '())
+(test (preorderBT bt1) '(1 2 3 4 5))
+(test (preorderBT bt2) '(3 4 5 8 3))
+(test (preorderBT bt3) '("f" "c" "h" "ahhh" "dd" "as"))
+(test (preorderBT bt4) '("eeeeeee" "ee" "e" "eee" "eeeee" "eeee" "eeeeee" "eeeeeeee"))
