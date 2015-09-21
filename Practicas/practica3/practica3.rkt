@@ -179,3 +179,135 @@
       (append (create-trackpoints (take raw-data 10) my-zones)
               (list
                (trackpoint (GPS 19.4906905 -99.2416019) 120 (warm-up 115.0 127.0) 1425619693))))
+
+;; Converts a number to radians
+(define (to-radians v)
+  (/ (* v pi) 180))
+
+;; Auxiliary function for haversine
+(define (haversine-aux l1 l2)
+  (define lat1 (to-radians (GPS-lat l1)))
+  (define lat2 (to-radians (GPS-lat l2)))
+  (define lat-diff (to-radians (- (GPS-lat l2) (GPS-lat l1))))
+  (define long-diff (to-radians (- (GPS-long l2) (GPS-long l1))))
+  (+ (sqr (sin (/ lat-diff 2))) (* (cos lat1) (* (cos lat2) (sqr (/ long-diff 2))))))
+
+;; Given two GPS type values, calculates the distance between two places
+(define (haversine l1 l2)
+  (define R 6371)
+  (define a (haversine-aux l1 l2))
+  (define c (* 2 (asin (sqrt a))))
+  (*  R c))
+
+;; Auxiliary function for total-distance
+(define (distance-aux ent lst)
+  (cond
+    [(empty? lst) 0]
+    [else (haversine (trackpoint-loc ent) (trackpoint-loc (car lst)))]))
+
+;; 5
+; Given a trackpoints list, returns the traveled distance
+(define (total-distance lst)
+  (cond
+    [(empty? lst) 0]
+    [else (+ (distance-aux (car lst) (cdr lst)) (total-distance (cdr lst)))]))
+
+(define sample (create-trackpoints (take raw-data 100) my-zones))
+(define trackpoints (create-trackpoints raw-data my-zones))
+(test (total-distance trackpoints) 5.051934549322941)
+(test (total-distance sample) 0.9509291243812747)
+(test (total-distance (create-trackpoints (take raw-data 4) my-zones)) 0.007864840450838653)
+(test (total-distance (create-trackpoints '() my-zones)) 0)
+(test (total-distance (create-trackpoints (take raw-data 50) my-zones)) 0.4610032616051818)
+
+;; Auxiliary function for average-hr
+(define (sum-all lst)
+    (cond
+      [(empty? lst) 0]
+      [else (+ (trackpoint-hr (car lst)) (sum-all (cdr lst)))]))
+      
+;; 6
+; Given a trackpoints list, returns the average heart rate
+(define (average-hr lst)
+  (cond
+    [(empty? lst) 0]
+    [else (floor (/ (sum-all lst) (length lst)))]))
+  
+(test (average-hr sample) 134)
+(test (average-hr trackpoints) 150)
+(test (average-hr (create-trackpoints (take raw-data 25) my-zones)) 121)
+(test (average-hr (create-trackpoints '() my-zones)) 0)
+(test (average-hr (create-trackpoints (take raw-data 200) my-zones)) 141)
+
+;; Auxiliary function for max-hr
+(define (max-aux m lst)
+  (cond
+    [(empty? lst) m]
+    [(>= m (trackpoint-hr (car lst))) (max-aux m (cdr lst))]
+    [else (max-aux (trackpoint-hr (car lst)) (cdr lst))]))
+
+;; 7
+; Given a trackpoints list, returns the highest heart rate
+(define (max-hr lst)
+  (max-aux 0 lst))
+  
+(test (max-hr sample) 147)
+(test (max-hr trackpoints) 165)
+(test (max-hr (create-trackpoints (take raw-data 42) my-zones)) 136)
+(test (max-hr (create-trackpoints '() my-zones)) 0)
+(test (max-hr (create-trackpoints (take raw-data 200) my-zones)) 165)
+
+;; Auxiliary function for collapse-trackpoints
+(define (collapse-aux lst e ltp)
+  (cond
+    [(empty? lst) (list ltp)]
+    [(and (= (trackpoint-hr (car lst)) (trackpoint-hr ltp))
+          (<= (haversine (trackpoint-loc ltp) (trackpoint-loc (car lst))) e))
+          (collapse-aux (cdr lst) e (car lst))]
+     [else (cons ltp (collapse-aux (cdr lst) e (car lst)))]))
+
+;; 8
+; Given a trackpoints list and an e epsilon, returns a new list with
+; collapsed consecutive elements such that each element in a collapsed set
+; has the same heart rate and the distance between each consecutive point 
+; is less or equal than e
+(define (collapse-trackpoints lst e)
+  (cond
+    [(empty? lst) '()]
+    [else (collapse-aux (cdr lst) e (car lst))]))
+
+(define sample-four (create-trackpoints (take raw-data 4) my-zones))
+(test (collapse-trackpoints sample-four 0.01)
+      (list
+       (trackpoint (GPS 19.4907258 -99.24101) 104 (resting 50 114.0) 1425619655)
+        (trackpoint (GPS 19.4907258 -99.24101) 108 (resting 50 114.0) 1425619658)
+        (trackpoint (GPS 19.4907107 -99.2410833) 106 (resting 50 114.0) 1425619662)))
+(test (collapse-trackpoints (create-trackpoints (take raw-data 11) my-zones) 0.01)
+      (list
+       (trackpoint (GPS 19.4907258 -99.24101) 104 (resting 50 114.0) 1425619655)
+       (trackpoint (GPS 19.4907258 -99.24101) 108 (resting 50 114.0) 1425619658)
+       (trackpoint (GPS 19.4907107 -99.2410833) 106 (resting 50 114.0) 1425619662)
+       (trackpoint (GPS 19.4907086 -99.2411981) 111 (resting 50 114.0) 1425619671)
+       (trackpoint (GPS 19.4907059 -99.2412562) 112 (resting 50 114.0) 1425619675)
+       (trackpoint (GPS 19.4906902 -99.2413796) 115 (warm-up 115.0 127.0) 1425619681)
+       (trackpoint (GPS 19.4906865 -99.241445) 120 (warm-up 115.0 127.0) 1425619685)
+       (trackpoint (GPS 19.4906861 -99.2415517) 119 (warm-up 115.0 127.0) 1425619690)
+       (trackpoint (GPS 19.4906905 -99.2416019) 120 (warm-up 115.0 127.0) 1425619693)))
+(test (collapse-trackpoints (create-trackpoints '() my-zones) 0.01) '())
+(test (collapse-trackpoints (create-trackpoints (take raw-data 15) my-zones) 0.01)
+      (append
+       (collapse-trackpoints (create-trackpoints (take raw-data 11) my-zones) 0.01)
+       (list
+        (trackpoint (GPS 19.4907662 -99.2417367) 122 (warm-up 115.0 127.0) 1425619702)
+        (trackpoint (GPS 19.4908105 -99.2418386) 123 (warm-up 115.0 127.0) 1425619709)
+        (trackpoint (GPS 19.4908799 -99.2419175) 123 (warm-up 115.0 127.0) 1425619713)
+        (trackpoint (GPS 19.491003 -99.2419904) 127 (warm-up 115.0 127.0) 1425619718))))
+(test (collapse-trackpoints (create-trackpoints (take raw-data 20) my-zones) 0.01)
+      (append
+       (collapse-trackpoints (create-trackpoints (take raw-data 15) my-zones) 0.01)
+       (list
+        (trackpoint (GPS 19.4910947 -99.2420837) 128 (fat-burning 128.0 140.0) 1425619722)
+        (trackpoint (GPS 19.491214 -99.2421806) 128 (fat-burning 128.0 140.0) 1425619726)
+        (trackpoint (GPS 19.4913238 -99.2422883) 128 (fat-burning 128.0 140.0) 1425619731)
+        (trackpoint (GPS 19.4913761 -99.2423724) 130 (fat-burning 128.0 140.0) 1425619735)
+        (trackpoint (GPS 19.4914257 -99.2424697) 131 (fat-burning 128.0 140.0) 1425619740))))
