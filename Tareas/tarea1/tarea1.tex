@@ -13,7 +13,7 @@
 %Preambulo
 \title{Lenguajes de Programación \\ Tarea I}
 \author{Andrea Itzel González Vargas \\ Karla Esquivel Guzmán \\ Carlos Gerardo Acosta Hernández}
-\date{Entrega: 18 de Septiembre de 2015 \\ Facultad de Ciencias UNAM}
+\date{Entrega: 21 de Septiembre de 2015 \\ Facultad de Ciencias UNAM}
 
 \begin{document}
 % cuerpo del documento
@@ -131,7 +131,59 @@ algo distinto a la evaluación resultante con alcance estático, ($num$ 17).
       {<:0 1> {with {{+ 10 <:1 2>} {<:0 1> 0}} 
                  {+ {+ <:0 1> <:0 0>} <:2 2>}}}}}
 \end{verbatim}
-\item 
+\item
+  \begin{verbatim}
+interp({with {{x 5} {adder {fun {x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}}}}})
+
+interp(subst(({with {{adder {fun {x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}}}}}) x (num (interp 5))))
+
+interp(subst(({with {{adder {fun {x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}}}}}) x (num 5)))
+
+interp({with {{adder {fun{x} {fun {y} {+ x y}}}} {z 3}}
+    (subst({with {{y 10} {add5 {adder x}}}
+        {add5 {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}}}} x (num 5)))})
+
+interp({with {{adder {fun{x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        (subst {add5 {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}}} x (num 5))}})
+
+interp({with {{adder {fun{x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 (subst {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}} x (num 5))}}})
+
+interp({with {{adder {fun{x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 (subst {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}} x (num 5))}}})
+
+interp({with {{adder {fun{x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 {with {{x (subst({+ 10 z} x (num 5)))} {y {add5 0}}}
+            {+ {+ y x} z}}}}})
+
+interp({with {{adder {fun{x} {fun {y} {+ x y}}}} {z 3}}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}}}}})
+
+interp(subst({with {z 3}
+    {with {{y 10} {add5 {adder x}}}
+        {add5 {with {{x {+ 10 z}} {y {add5 0}}}
+            {+ {+ y x} z}}}}} adder (num(interp{fun{x} {fun {y} {+ x y}}}))))
+\end{verbatim}
+  
 \end{enumerate}
 
 \end{document}
