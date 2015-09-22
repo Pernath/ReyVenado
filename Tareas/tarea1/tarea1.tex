@@ -19,7 +19,75 @@
 % cuerpo del documento
 \maketitle
 \section{Problema I}
-Hola :v
+\begin{enumerate}[a)]
+\item \indent Para ilustrar la no-linealidad de ambientes podemos utilizar el siguiente esquema de programa:
+\begin{verbatim}
+  {with {x 3}
+    {with {y 5}
+      {with {z 7}
+        {+ x {+ y z}}}}
+\end{verbatim}
+A pesar de ser muy sencillo nos proporciona una idea de lo que ocurre en tiempo de ejeución. A partir de los siguientes diagramas representativos
+del stack (Andrea):\par
+( ) $\to$ ((x 3)( )) $\to$ ((y 5) (x 3) ( )) $\to$ ((z 7)(y 5)(x 3)( ))\par
+\indent Notemos que en la evaluación de la suma final del esquema, la ejecución no es lineal respecto al número de elementos (tres) de la entrada.
+Veamos por qué: Para obtener el valor del primer elemento de la suma, es decir \textit{x}, es necesario bajar en el stack hasta el primer ambiente,
+pasando entonces por tres ambientes, para obtener los valores de la segunda suma que corresponde al segundo sumando de la primera, para \textit{y}
+es necesario pasar por dos ambientes y, finalmente para obtener el valor de \textit{z} sólo pasamos por un ambiente que es el último agregado al
+stack.\par
+\indent De manera general, podemos describir este peor caso en la ejecución señalando que por cada uno de los n elementos, es necesario recorrer
+un número lineal de ambientes. Es decir, para el primero, se recorrerían $n$ ambientes, para el segundo $n-1$, para el tercero $n-2$, y así sucesivamente hasta llegar al n-ésimo que recorrerá 1. Esta serie de pasos también podemos verla como la suma de los primeros naturales hasta $n$ que pertenece al orden cuadrático,
+es decir como:
+\begin{equation}
+  1+2+3+...+n = \frac{n(n+1)}{2} \in O(n^2)
+\end{equation}
+De manera que la implementación de ambientes con un stack no es lineal sobre el número de elementos de la entrada.
+
+\item 
+\item eh
+\item eh
+\end{enumerate}
+
+\section{Problema II}
+\begin{enumerate}[a)]
+\item No. A continuación el contraejemplo y el porqué del fallo en la estrategia de evaluación de Ben para algunos casos.
+\item Es cierto que para este caso particular,
+\begin{verbatim}
+  {with {x 4}
+    {with {f {fun {y} {+ x y}}}
+      {with {x 5}
+        {f 10}}}}
+\end{verbatim}
+  la evaluación con alcance dinámico que propone Ben tiene el mismo resultado que con la evaluación
+  de alcance estático, esto es porque la substitución más vieja en el stack que se considera en esta propuesta coincide con la substitución que
+  considera el alcance estático. ¿Qué es lo que sucede si tenemos una substitución en un nivel más abajo que el primero en el stack original?
+  Ben dice que tomemos la substitución más profunda de una variable en el stack, por lo que consideraríamos este, pero en el alcance estático
+  no necesariamente coincide el valor que se considera para una variable con el valor que se le da en el ambiente más profundo.
+  Haciendo una ligera modificación al ejemplo al caso particular en que la adecuación propuesta de Ben funciona, podemos proveer el contraejemplo
+  del caso general que queremos contradecir.
+\begin{verbatim}
+  {with {x 7}
+     {with {x 4}
+         {with {f {fun {y} {+ x y}}} 
+             {with {x 5} 
+                {f 10}}}}}
+\end{verbatim}
+Con alcance estático, la evaluación resultante es ($num$ 14) pues se toma el primer valor que se encuentre a partir de la función, es decir 4.
+En la propuesta de Ben, se tomará el último valor disponible para esa variable en el stack, en este ejemplo 7, por lo que resultará en
+algo distinto a la evaluación resultante con alcance estático, ($num$ 17).
+\end{enumerate}
+
+\section{Problema III}
+\begin{enumerate}[a)]
+\item
+\begin{verbatim}
+{with {5 {fun {x} {fun {y} {+ x y}}} 3} 
+   {with {10 {<:0 1> <:0 0>}} 
+      {<:0 1> {with {{+ 10 <:1 2>} {<:0 1> 0}} 
+                 {+ {+ <:0 1> <:0 0>} <:2 2>}}}}}
+\end{verbatim}
+\item 
+\end{enumerate}
 
 \end{document}
 
