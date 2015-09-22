@@ -28,8 +28,46 @@
         {+ x {+ y z}}}}
 \end{verbatim}
 A pesar de ser muy sencillo nos proporciona una idea de lo que ocurre en tiempo de ejeución. A partir de los siguientes diagramas representativos
-del stack (Andrea):\par
-( ) $\to$ ((x 3)( )) $\to$ ((y 5) (x 3) ( )) $\to$ ((z 7)(y 5)(x 3)( ))\par
+del stack:\par
+\begin{table}[ht]
+  \centering
+  \begin{minipage}{.10\linewidth}
+    \begin{tabular}{|c|}
+      \hline \\ [-2.5 ex]
+         \\ [0 ex]
+      \hline
+    \end{tabular}
+  \end{minipage}%
+  \begin{minipage}{.15\linewidth}
+    \begin{tabular}{|c|}
+      \hline \\ [-2.5 ex]    
+      x 3 \\ [0 ex]
+      \hline 
+    \end{tabular}
+  \end{minipage}%
+  \begin{minipage}{.15\linewidth}
+    \begin{tabular}{|c|}
+      \hline \\ [-2.5 ex]
+      y 5 \\ [0 ex]
+      \hline
+      x 3 \\ [0 ex]
+      \hline
+    \end{tabular}
+  \end{minipage}%
+  \begin{minipage}{.15\linewidth}
+    \begin{tabular}{|c|}
+      \hline \\ [-2.5 ex]
+      z 7 \\ [0 ex]
+      \hline
+      y 5 \\ [0 ex]
+      \hline
+      x 3 \\ [0 ex]
+      \hline
+    \end{tabular}
+  \end{minipage}
+\end{table}
+
+\par
 \indent Notemos que en la evaluación de la suma final del esquema, la ejecución no es lineal respecto al número de elementos (tres) de la entrada.
 Veamos por qué: Para obtener el valor del primer elemento de la suma, es decir \textit{x}, es necesario bajar en el stack hasta el primer ambiente,
 pasando entonces por tres ambientes, para obtener los valores de la segunda suma que corresponde al segundo sumando de la primera, para \textit{y}
@@ -43,9 +81,16 @@ es decir como:
 \end{equation}
 De manera que la implementación de ambientes con un stack no es lineal sobre el número de elementos de la entrada.
 
-\item 
-\item eh
-\item eh
+\item Para mejorar la complejidad en tiempo de la implementación de ambientes, podemos utilizar en lugar de un stack, una \textit{hash table}.
+  Es importante definir las características de esta \textit{hash table} especializada en ser el ``repositorio de substituciones diferidas'' (deferred substitutions repository, como se le llama en el Shriram).\par
+  En primer lugar, el id o nombre de la variable sería en este caso la llave, mientras que el valor asignado a ésta se agregaría en la ``cubeta'' o ``casilla'' que le corresponde a dicha llave.\par
+  En segundo lugar, dicha cubeta debe tener como estructura de datos afín, una pila, pues nos interesa sacar los elementos de las colisiones (que esperamos tener) en la operación de búsqueda para el momento de una substitución que debamos hacer en la evaluación. De tal suerte que dada la profundidad en el stack particular de la casilla de una llave, refiere al nivel de anidamiento en las substituciones subsecuentes, es decir, el ambiente al que pertenece. Entre más arriba se encuentre un valor en la pila de una casilla, pertenece a un ambiente más nuevo, una substitución de la variable más reciente. 
+  
+\item Inicialmente, si no tenemos subsituciones que realizar, la tabla no tendrá elementos en su interior. Cada vez que en el esquema del programa se encuentre una subsitución, en nuestro caso con la forma de un \textit{with} o aplicación de función, se tomará el \textit{bound-id} como llave y la \textit{named-expr} como valor para realizar la operación de inserción en la \textit{hash table} y continuamos la interpretación hasta que se exija alguno de los valores de las variables para alguna operación en la ejecución. \par
+  Finalmente, en la operación de substitución que implica una búsqueda en la tabla, para obtener el valor para una variable en la llamada a una aplicación de función o una operación que exija la substitución en tiempo de ejecución, es preciso tomar el elemento disponible  de la pila de la casilla que le corresponde a la llave (variable) que se está solicitando, si hemos terminado de sustituir las variables que demanden los valores de ese ambiente particular, podemos eliminar dicho valor para preparar la estructura para otra posible operación que exija la substitución de la misma variable pero que ocurra en un ambiente superior (más viejo).
+\item  Gracias a esta estructura, podemos mejorar la operación de obtener el valor que le corresponde a una variable para la evaluación de n
+  elementos, de tiempo lineal por cada elemento, a constante. Por tanto tendríamos como complejidad resultante un tiempo de orden $O(n)$.
+  Veamos que en el peor caso del inciso $a)$, se sigue conservando la complejidad, pues no es necesario pasar por un número lineal de substituciones para encontrar la solicitada, gracias al \textit{hash table} es posible realizar esta operación en tiempo constante e igualmente en la obtención del valor no es necesario recorrer la pila, tan sólo con tomar el primero ($O(1)$), pues estamos en el ambiente más reciente y por tanto no es necesario bajar. De la misma manera, en cuanto hemos terminado con la sustitución para un ambiente particular es necesario borrar el valor del nivel correspondiente en el stack de una casilla, que siempre será el primero, lo cual no afecta la eficiencia de la substitución ($O(1)$). Tenemos entonces que para una entrada de n elementos, la substitución de cada uno de ellos puede realizarse en tiempo constante, por lo que gracias a la nueva estructura de substituciones diferidas, la complejidad es mejorada. 
 \end{enumerate}
 
 \section{Problema II}
