@@ -17,3 +17,9 @@ Muy bien, les recomiendo usar let* en lugar de una serie
 de define pero a gusto del programador.
 
 **Calificación: 10**
+
+### Practica 3
+
+Muy bien, excelente practica
+
+**Calificación: 10**
