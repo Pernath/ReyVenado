@@ -23,3 +23,19 @@ de define pero a gusto del programador.
 Muy bien, excelente practica
 
 **Calificación: 10**
+
+## Tareas
+
+### Tarea 2
+
+Problema 1: Mu bien, excelente desarrollo.
+
+Problema 2: Muy bien, pero creo que si hubieran utilizado el hecho
+de que los argumentos de una función no son evaluados en un lenguaje perezoso
+hubieran tenido un programa mas simple y directo.
+
+Problema 3: Muy bien, solo quisiera que pensaran en el caso de que lugar de regresar un numero hubiera sido el identificador de una lista infinita.
+
+Problema 4: Muy bien simple y directo.
+
+**Calificación: 10**
