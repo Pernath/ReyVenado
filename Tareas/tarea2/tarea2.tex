@@ -11,20 +11,60 @@
 \usepackage{enumerate}
 
 %Preambulo
-\title{Lenguajes de Programación \\ Tarea I}
+\title{Lenguajes de Programación \\ Tarea II}
 \author{Andrea Itzel González Vargas \\ Karla Esquivel Guzmán \\ Carlos Gerardo Acosta Hernández}
 \date{Entrega: 10 de Octubre de 2015 \\ Facultad de Ciencias UNAM}
 
 \begin{document}
 \maketitle
 \section*{Problema I}
+FAE es un lenguaje Turing-Completo. Decimos que un lenguaje es Turing-Completo en el paradigma funcional si es posible hacer recursión general con él. Este concepto, viene acompañado del condicional "if'', para que pueda cumplirse. \par
+\begin{itemize}
+\item \textbf{Condicional}\par
+  En el \textit{cálculo lambda} es posible representar tipos de datos como booleanos y números naturales. El lenguaje FAE ya nos permite directamente el uso de números y dado que el lenguaje anfitrion de FAE es \textit{Racket}, es posible dar una representación de los booleanos gracias a las funciones anónimas y a partir de dichas definiciones construir el condicional \textit{if-then-else}. En implementaciones que extienden de FAE, ya contamos directamente con el condicional \textit{if0}.\\ \par
+  En cálculo lambda puro, las definiciones de los booleanos son de la siguiente forma: \par
+  \begin{quote}
+  true =_{def} \;\;$\lambda x\lambda y.x$ \\
+  false =_{def} \;\;$\lambda x\lambda y.y$\par
+  \end{quote}
+  Mientras que el condicional podemos construirlo como\\
+  \begin{quote}
+    if-then-else =_{def} \;\;$\lambda v.\lambda t\lambda f.vtf$ \par
+  \end{quote}
+  
+  Entonces para la rama del \textit{then} tendríamos \\
+  \begin{quote}
+    if-then-else true e1 e2 $\to$^* \;\; e1\par
+  \end{quote}
+  
+  Y para el \textit{else} \\
+  \begin{quote}
+  if-then-else false e1 e2 $\to$^* \;\; e2\par
+  \end{quote}
+\item \textbf{Recursión}\par
+  Gracias al combinador Y, que es una función que nos permite resolver la recursión dada por una función. No podemos hacer recursión directamente
+  con FAE, sin embargo, el combinador Y nos permite definir la recursión general sobre funciones de FAE.\\
+  Es mostrada una implementación en el \textit{Shriram} como sigue: \par
+\begin{verbatim}
+    (lambda (p)
+      ((lambda (f)
+         (f f))
+       (lambda (f)
+         (p (f f)))))
+\end{verbatim}
+
+Siendo que su propiedad trabaja de forma que $(Y\; f) = f(Y\; f) = f(f((Y\; f))) = ...$ Y es posible de resolver gracias al condicional, decimos que es tenemos recursión general en el lenguaje FAE. Por lo tanto es Turing-completo.
+  
+    
+\end{itemize}
+
 \section*{Problema II}
 Comenzemos diciendo que $Java$ es un lenguaje de programación con evaluación glotona. Para probarlo, nos valdremos del lanzamiento de excepciones de
-$Java$ en tiempo de ejecución. En el código fuente que se anexa a la carpeta de esta tarea, viene escrito un método llamado $proffeager$ en la clase
+$Java$ en tiempo de ejecución. En el código fuente que se anexa a la carpeta de esta tarea, viene escrito un método llamado \textit{proffeager} en la clase
 Prueba. Dicho método recibe un entero y devuelve otro; en el cuerpo del método se declara una asignación de variable a una expresión aritmética que
 de antemano sabemos que al resolverse devuelve la excepción \textit{``java.lang.ArithmeticException: / by zero''}. \par
 Ahora supongamos que $Java$ tiene evaluación perezosa. Esto es lo que debe ocurrir bajo la aplicación del método:\\
-Primero ocurre la asignación de la variable x con la expresión aritmética.\\ Luego,
+Primero ocurre la asignación de la variable $x$ con la expresión aritmética.\\ Luego,
 si el método recibe un 0, se devolverá el resultado de sumar 2 con 3. \\
 Si el método recibe un 1, se evaluará el valor de x y se imprimirá en pantalla. \\
 En cualquier otro caso se imprimirá un 42. \\
@@ -34,7 +74,7 @@ se suponía sólo se lanzaría una para el caso particular de la entrada 1. Bajo
 No es difícil asociar dichos errores
 con la asignación de la variable. Sin embargo, nos aseguramos de imprimir la ruta al culpable de lanzar la excepción en su captura, y efectivamente
 se trata de la asignación en la línea 5. Esto quiere decir que lo primero que hizo $Java$ fue evaluar la expresión aritmética en la asignación,
-en lugar de asgignar la operación aritmética directamente, como haría un lenguaje perezoso. Cabe señalar que para la asignación el tipo primitivo $int$
+en lugar de asignar la operación aritmética directamente, como haría un lenguaje perezoso. Cabe señalar que para la asignación el tipo primitivo $int$
 no se induce un punto estricto (si Java fuera perezoso), pues bien podría tratarse de un método  que devolviera la evaluación de una expresión
 aritmética errónea, pero igualmente, el método sería llamado en la asignación (aunque estuviera definido el resultado del método en el dominio int)
 y no hasta el uso de la variable.\par
@@ -88,7 +128,7 @@ De tal suerte que se confirma nuestra hipótesis.
 Los lenguajes perezosos no pueden permitirse las operaciones de estado porque comprometerían la integridad en un programa, entre una evaluación
 esperada y la que resulta en realidad. Puesto de esa manera, cambiaría el significado del programa.
 \par 
-Suponiendo que $Racket$ fuera un lenguaje perezoso, escribimos un programa ejemplo para ilustrar el problema de utilizar una asignación de valores
+Suponiendo que $Racket$ fuera un lenguaje perezoso, escribimos un programa ejemplo (estado.rkt) para ilustrar el problema de utilizar una asignación de valores
 como ocurre gracias a la función $set!$ que nos ofrece el lenguaje.
 En el cuerpo del programa se define la función recursiva $fib$ (de fibonacci) y una función más \textit{change-state} que dados dos valores asigna el primero al principio de la función a la variable $x$, luego se le asigna a la variable $y$ la llamada a la función $fib$ con la primera asignación de $x$, posteriormente se cambia el valor de $x$ por el segundo parámetro de la función y finalmente se devuelve el valor de $y$. Dada nuestra forma de escribir y pensar el código (linealmente, como dicta la intuición), uno esperaría que se devolviera el $fibonacci$ del primer parámetro de la función. Sin embargo, como ocurrió la segunda asignación y tenemos en frente un supuesto lenguaje con evaluación perezosa, lamentablemente para el momento de la evaluación de $y$, ya habrá ocurrido la segunda asignación de $x$ y en realidad obtendríamos el $fibonacci$ del segundo parámetro recibido.\par
 Claramente, en este caso particular no es muy difícil evitar errores si tenemos un programa tan pequeño. Simplemente no hacemos la segunda asignación, en esta ocasión, futil. Por otro lado si tenemos un programa de
