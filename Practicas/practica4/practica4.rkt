@@ -18,3 +18,8 @@
   (cond
     [(empty? lst) '()]
     [else (cons (bind-name (car lst)) (desugar-aux (cdr lst)))]))
+
+(define (desugar-aux2 lst)
+  (cond
+    [(empty? lst) '()]
+    [else (cons (desugar (bind-val (car lst))) (desugar-aux2 (cdr lst)))]))
