@@ -24,6 +24,12 @@ Muy bien, excelente practica
 
 **Calificación: 10**
 
+### Practica 4
+
+Muy bien, el desugar se podia hacer sin tanta funcion auxiliar pero muy bien.
+
+**Calificación: 10**
+
 ## Tareas
 
 ### Tarea 1
