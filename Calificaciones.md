@@ -26,6 +26,13 @@ Muy bien, excelente practica
 
 ## Tareas
 
+### Tarea 1
+Problema I: Excelente, muy bien explicado.
+Problema II: Muy bien.
+Problema III: Bien.
+
+**Calificación: 10**
+
 ### Tarea 2
 
 Problema 1: Mu bien, excelente desarrollo.
