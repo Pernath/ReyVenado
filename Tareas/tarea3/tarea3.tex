@@ -1,0 +1,64 @@
+%Especificacion
+\documentclass[12pt]{article}
+
+%Paquetes 
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,activeacute]{babel}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{enumerate}
+
+%Preambulo
+\title{Lenguajes de Programación \\ Tarea III}
+\author{Andrea Itzel González Vargas \\ Karla Esquivel Guzmán \\ Carlos Gerardo Acosta Hernández}
+\date{Facultad de Ciencias UNAM}
+
+\begin{document}
+\maketitle
+\section*{Problema I}
+\begin{center}
+\noindent$\Gamma$ [x $\leftarrow$ number], [fib (number $\rightarrow$ number)] $\vdash$ (- x 1) : number $\surd$ \\
+$\Gamma$ [x $\leftarrow$ number], [fib (number $\rightarrow$ number)] $\vdash$ (- x 2) : number $\surd$ \\
+\noindent\rule{11cm}{0.4pt} \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ x : number  $\Gamma$ [x $\leftarrow$ number] $\vdash$ 1 : number $\surd$ \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ (fib (- x 1)) : number \\ 
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ (fib (- x 2)) : number \\
+\noindent\rule{11cm}{0.4pt} \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ x : number $\surd$ \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ 0 : number $\surd$ \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ (= x 1) : bool   $\Gamma$ [x $\leftarrow$ number] $\vdash$ 1 : number $\surd$ \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ (+ (fib (- x 1)) (fib (- x 2))) : number \\
+\noindent\rule{11cm}{0.4pt} \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ (= x 0) : boolean \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ 0 : number $\surd$ \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$ (if (= x 1) 1 (+ (fib (- x 1) fib (- x 2)))) : number \\
+\noindent\rule{11cm}{0.4pt} \\
+$\Gamma$ [x $\leftarrow$ number] $\vdash$  (if (= x 0) 0 (if (= x 1) 1 (+ (fib (- x 1) fib (- x 2))))) : number \\
+\noindent\rule{11cm}{0.4pt} \\
+$\Gamma$ $\vdash$ fib (x : number) : number (if (= x 0) 0 (if (= x 1) 1 (+ (fib (- x 1) fib (- x 2))))) : (number $\rightarrow$ number) \\
+
+
+$\Gamma$ $\vdash$ empty?: (list $\rightarrow$ bool)   $\Gamma$ $\vdash$ l : list $\surd$
+\noindent\rule{11cm}{0.4pt} \\
+$\Gamma$ $\vdash$ (empty? l) : bool
+
+\end{center}
+\section*{Problema II}
+$\boxed{1}$ (+ $\boxed{2}$ 1 $\boxed{3}$ (first $\boxed{4}$ (cons $\boxed{5}$ true $\boxed{6}$ empty))) \\
+
+
+\noindent Retricciones \\
+
+\noindent{[[}$\boxed{1}${]]} = number si {[[}$\boxed{2}${]]} = {[[}$\boxed{3}${]]} = number \\
+{[[}$\boxed{2}${]]} = number \\
+{[[}$\boxed{3}${]]} = number si [[$\boxed{4}$]] = nlist \\
+{[[}$\boxed{4}${]]} = nlist si [[$\boxed{5}$]] = number y [[$\boxed{6}$]] = nlist \\
+{[[}$\boxed{5}${]]} = number si [[$\boxed{5}$]] contiene un numeral, pero [[$\boxed{5}$]] = boolean!! \\
+Por lo tanto esta mal formado el programa
+
+\section*{Problema III}
+\section*{Problema IV}
+\end{document}
+ 
