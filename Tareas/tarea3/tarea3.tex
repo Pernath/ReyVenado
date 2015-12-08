@@ -3,12 +3,14 @@
 
 %Paquetes 
 \usepackage{lmodern}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=3cm,letterpaper]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,activeacute]{babel}
 \usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{enumerate}
+\usepackage{longtable}
 
 %Preambulo
 \title{Lenguajes de Programación \\ Tarea III}
@@ -59,6 +61,102 @@ $\boxed{1}$ (+ $\boxed{2}$ 1 $\boxed{3}$ (first $\boxed{4}$ (cons $\boxed{5}$ tr
 Por lo tanto esta mal formado el programa
 
 \section*{Problema III}
+\noindent$\boxed{1}$ \{fun \{f : C1\} : C2 \\
+  \indent$\boxed{2}$ \{fun \{x : C3\} : C4 \\
+  \indent\indent$\boxed{3}$ \{fun \{y : C5\} : C6 \\
+    \indent\indent\indent\{$\boxed{4}$ cons x $\boxed{5}$ \{f $\boxed{6}$ \{f y\}\}\}\}\}\} \\
+
+    \begin{center}
+      \begin{longtable}{ | l | p{10 cm} | p{5 cm} | }
+        \hline
+        Acción & Stack & Sustitución \\ \hline \hline
+        Inicio & [[$\boxed{1}$]] = [[f]] $\rightarrow$ [[$\boxed{2}$]] & Vacio \\
+        & [[$\boxed{2}$]] = [[x]] $\rightarrow$ [[$\boxed{3}$]] & \\
+        & [[$\boxed{3}$]] = [[y]] $\rightarrow$ [[$\boxed{4}$]] & \\
+        & [[cons]] = [[$\boxed{x}$]] $\times$ [[$\boxed{5}$]] $\rightarrow$ [[$\boxed{4}$]] & \\
+        & [[f]] = [[$\boxed{6}$]] $\rightarrow$ [[$\boxed{5}$]] & \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & \\ \hline
+        
+        Paso 3 & [[$\boxed{2}$]] = [[x]] $\rightarrow$ [[$\boxed{3}$]] & [[$\boxed{1}$]] $\mapsto$ [[f]] $\rightarrow$ [[$\boxed{2}$] \\        
+        & [[$\boxed{3}$]] = [[y]] $\rightarrow$ [[$\boxed{4}$]] & \\
+        & [[cons]] = [[$\boxed{x}$]] $\times$ [[$\boxed{5}$]] $\rightarrow$ [[$\boxed{4}$]] & \\
+        & [[f]] = [[$\boxed{6}$]] $\rightarrow$ [[$\boxed{5}$]] & \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & \\ \hline
+
+        Paso 3 & [[$\boxed{3}$]] = [[y]] $\rightarrow$ [[$\boxed{4}$]] & [[$\boxed{1}$]] $\mapsto$ [[f]] $\rightarrow$ [[$\boxed{2}$] \\ 
+        & [[cons]] = [[$\boxed{x}$]] $\times$ [[$\boxed{5}$]] $\rightarrow$ [[$\boxed{4}$]] &  [[$\boxed{2}$]] $\mapsto$ [[x]] $\rightarrow$ [[$\boxed{3}$]] \\
+        & [[f]] = [[$\boxed{6}$]] $\rightarrow$ [[$\boxed{5}$]] & \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & \\ \hline
+          
+        Paso 3 & [[cons]] = [[x]] $\times$ [[$\boxed{5}$]] $\rightarrow$ [[$\boxed{4}$]]
+        = number $\times$ list $\rightarrow$ list & [[$\boxed{1}$]] $\mapsto$ [[f]] $\rightarrow$ [[x]] $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[f]] = [[$\boxed{6}$]] $\rightarrow$ [[$\boxed{5}$]] & [[$\boxed{2}$]] $\mapsto$ [[x]] $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & [[$\boxed{3}$]] $\mapsto$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        &  & \\ \hline
+        
+        Paso 5 & [[x]] = number & [[$\boxed{1}$]] $\mapsto$ [[f]] $\rightarrow$ [[x]] $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[$\boxed{5}$]] = list & [[$\boxed{2}$]] $\mapsto$ [[x]] $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[$\boxed{4}$]] = list & [[$\boxed{3}$]] $\mapsto$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[f]] = [[$\boxed{6}$]] $\rightarrow$ [[$\boxed{5}$]] & \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & \\ \hline
+        
+        Paso 3 & [[$\boxed{5}$]] = list & [[$\boxed{1}$]] $\mapsto$ [[f]] $\rightarrow$ number $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[$\boxed{4}$]] = list & [[$\boxed{2}$]] $\mapsto$ number $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[f]] = [[$\boxed{6}$]] $\rightarrow$ [[$\boxed{5}$]] & [[$\boxed{3}$]] $\mapsto$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & [[x]] $\mapsto$ number \\ \hline
+        
+        Paso 3 & [[$\boxed{4}$]] = list & [[$\boxed{1}$]] $\mapsto$ [[f]] $\rightarrow$ number $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[f]] = [[$\boxed{6}$]] $\rightarrow$ list & [[$\boxed{2}$]] $\mapsto$ number $\rightarrow$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & [[$\boxed{3}$]] $\mapsto$ [[y]] $\rightarrow$ [[$\boxed{4}$]] \\
+        & & [[x]] $\mapsto$ number \\
+        & & [[$\boxed{5}$]] $\mapsto$ list \\ \hline
+  
+        Paso 4 & [[f]] = [[$\boxed{6}$]] $\rightarrow$ list & [[$\boxed{1}$]] $\mapsto$ [[f]] $\rightarrow$ number $\rightarrow$ [[y]] $\rightarrow$ list \\
+        & [[f]] = [[y]] $\rightarrow$ [[$\boxed{6}$]] & [[$\boxed{2}$]] $\mapsto$ number $\rightarrow$ [[y]] $\rightarrow$ list \\
+        & & [[$\boxed{3}$]] $\mapsto$ [[y]] $\rightarrow$ list \\
+        & & [[x]] $\mapsto$ number \\
+        & & [[$\boxed{5}$]] $\mapsto$ list \\
+        & & [[$\boxed{4}$]] $\mapsto$ list \\ \hline
+     
+        Paso 3 & [[$\boxed{6}$]] $\rightarrow$ list = [[y]] $\rightarrow$ [[$\boxed{6}$]] & [[$\boxed{1}$]] $\mapsto$ [[$\boxed{6}$]] $\rightarrow$ list $\rightarrow$ number $\rightarrow$ [[y]] $\rightarrow$ list \\
+        & & [[$\boxed{2}$]] $\mapsto$ number $\rightarrow$ [[y]] $\rightarrow$ list \\
+        & & [[$\boxed{3}$]] $\mapsto$ [[y]] $\rightarrow$ list \\
+        & & [[x]] $\mapsto$ number \\
+        & & [[$\boxed{5}$]] $\mapsto$ list \\
+        & & [[$\boxed{4}$]] $\mapsto$ list \\
+        & & [[f]] $\mapsto$ [[$\boxed{6}$]] $\rightarrow$ list \\ \hline
+        
+        Paso 5 & [[$\boxed{6}$]] = [[y]] & [[$\boxed{1}$]] $\mapsto$ [[$\boxed{6}$]] $\rightarrow$ list $\rightarrow$ number $\rightarrow$ [[$\boxed{6}$]] $\rightarrow$ list \\
+        & list = [[$\boxed{6}$]] & [[$\boxed{2}$]] $\mapsto$ number $\rightarrow$ [[$\boxed{6}$]] $\rightarrow$ list \\
+        & & [[$\boxed{3}$]] $\mapsto$ [[y]] $\rightarrow$ list \\
+        & & [[x]] $\mapsto$ number \\
+        & & [[$\boxed{5}$]] $\mapsto$ list \\
+        & & [[$\boxed{4}$]] $\mapsto$ list \\
+        & & [[f]] $\mapsto$ [[$\boxed{6}$]] $\rightarrow$ list \\ \hline
+        
+        Paso 4 & list = [[$\boxed{6}$]] & [[$\boxed{1}$]] $\mapsto$ [[$\boxed{6}$]] $\rightarrow$ list $\rightarrow$ number $\rightarrow$ [[$\boxed{6}$]] $\rightarrow$ list \\
+        & & [[$\boxed{2}$]] $\mapsto$ number $\rightarrow$ [[$\boxed{6}$]] $\rightarrow$ list \\
+        & & [[$\boxed{3}$]] $\mapsto$ [[$\boxed{6}$]] $\rightarrow$ list \\
+        & & [[x]] $\mapsto$ number \\
+        & & [[$\boxed{5}$]] $\mapsto$ list \\
+        & & [[$\boxed{4}$]] $\mapsto$ list \\
+        & & [[f]] $\mapsto$ [[$\boxed{6}$]] $\rightarrow$ list \\
+        & & [[y]] $\mapsto$ [[$\boxed{6}$]] \\ \hline
+        
+        Paso 4 &Vacio & [[$\boxed{1}$]] $\mapsto$ list $\rightarrow$ number $\rightarrow$ list $\rightarrow$ list \\
+        & & [[$\boxed{2}$]] $\mapsto$ number $\rightarrow$ list $\rightarrow$ list \\
+        & & [[$\boxed{3}$]] $\mapsto$ list $\rightarrow$ list \\
+        & & [[x]] $\mapsto$ number \\
+        & & [[$\boxed{5}$]] $\mapsto$ list \\
+        & & [[$\boxed{4}$]] $\mapsto$ list \\
+        & & [[f]] $\mapsto$ list $\rightarrow$ list \\
+        & & [[y]] $\mapsto$ list \\
+        & & [[$\boxed{7}$]] $\mapsto$ list \\
+        \hline
+    \end{longtable}
+\end{center}
+
+
 \section*{Problema IV}
 \end{document}
  
