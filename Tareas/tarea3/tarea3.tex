@@ -157,6 +157,46 @@ Por lo tanto esta mal formado el programa
 \end{center}
 
 
-\section*{Problema IV}
+    \section*{Problema IV}
+     En ninguno de los dos casos cambia la regla de tipado. Para justificarlo, primero recordemos las reglas correspondientes.
+ \begin{itemize}
+ \item Definición de funciones:
+   \begin{center}
+     \noindent\;\;\;\;\;\;\; $\Gamma$[$i\leftarrow\tau_1$ ] $\vdash$ $b$ : $\tau_2$\\
+     \noindent\;\;\;\;\;\;\;\;\rule{7cm}{0.4pt}\\
+     \noindent\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;$\Gamma$ $\vdash$ \{$fun$ \{$i$ : $\tau_1$\} : $\tau_2$ $b$\} : ($\tau_1 \rightarrow \tau_2$)
+   \end{center}
+ \item Aplicación de funciones:
+   \begin{center}
+     $\Gamma$ $\vdash$ $f$ : $(\tau_1 $\rightarrow$ \tau_2)$ \;\;\; \;\;\;\;\;\; $\Gamma$ $\vdash$ $a$ : \tau_1\\
+     \noindent\;\;\;\;\;\;\;\;\rule{7cm}{0.4pt}\\
+     \noindent\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;$\Gamma$ $\vdash$ \{$f$ $a$\} : $\tau_2$      
+   \end{center}
+ \end{itemize}
+
+ Veamos que para determinar el tipo de las expresiones, nunca se hace alusión directa a la evaluación. En las funciones se habla en cambio de tipos de
+ entrada y tipos de salida que no restringimos a ser el mismo. Podríamos pensar para nuestro lenguaje perezoso que en la aplicación de función
+ si recibimos una expresión en lugar de un valor del tipo de entrada esperado tendríamos que hacer ciertas modificaciones a la regla de tipado,
+ sin embargo ya sabemos que uno de los puntos estrictos de un lenguaje perezoso ocurre precisamente en una aplicación de función, por lo que se está forzando la evaluación y la función recibe el resultado de dicha evaluación que debe cumplir el tipo especificado. Esto para la entrada. Para el tipo de salida, si exigimos un resultado, aún con un lenguaje perezoso no podemos devolver una expresión sin evaluar, por lo que no
+ necesitamos modificar la regla de tipado. Tanto el argumento de la función como el resultado tendrá la misma forma para ambas evaluaciones.
+Por lo tanto, no es necesario cambiar la regla original para la versión perezosa del lenguaje. 
+ 
+\section*{Problema V}
+\subsection*{Explícito}
+En el polimorfismo explícito los tipos de los objetos deben ser declarados en su inicialización para cada uno antes de ser operados.
+Esto nos lleva a una programación repetitiva, pesada y mucho más restrictiva. El control del código puede disminuir con el uso de este
+polimorfismo por la obligatoriedad de hacer presente el tipo. Sin embargo, en su uso se encuentran ciertas ventajas. Para empezar,la creación de nuevas clases de objetos sin afectar la forma ya existente de la que procede. También la facilidad con la que se recicla el código es mayor y por
+lo general los lenguajes proveen de ciertas herramientas para evitar la presencia explícita del tipo más que al momento de inicializarlo.
+
+\subsection*{Implícito}
+Uno de los ejes en los lenguajes de programación con polimorfismo implícito es la utilización de código en común si la abstracción semántica
+lo permite. Ello se traduce en una de las ventajas más grandes sobre el otro, la simplicidad y la versatilidad del código. Es resumido en ``nunca repitas el código''. Si encontramos una o más secciones de código repetidas es porque el autor del código falló en identificar una abstracción en común para diferentes problemas. Sin embargo, para vislumbrar un par de desventajas podemos considerar el siguiente escenario:
+Bajo el contexto de programación en \textit{Java}, consideremos una lista con capacidad para almacenar objetos de cualquier tipo. Para evitar la
+repetición del código, es posible hacer uso de la jerarquía de tipos de acuerdo al supertipo más general que es \textit{Object}. Ahora, al momento de tomar elementos de la lista para operar con ellos, nos veremos obligados a hacer un $cast$ a su tipo específico para el contexto particular en el que será utilizado. Por supuesto, obtendremos un código desordenado y perderemos precisión sobre las tareas que los objetos son capaces de realizar, de hecho puede que nos veamos afectados por un nuevo factor de incertidumbre.
+Sin embargo, este tipo de desventajas es para situaciones o circunstancias menos generales, por lo que no significa una contraparte fuerte en
+comparación con las ventajas que ofrece.
+
+\section*{Problema VI}
+    
 \end{document}
  
