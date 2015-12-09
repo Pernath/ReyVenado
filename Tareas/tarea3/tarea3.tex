@@ -11,7 +11,7 @@
 \usepackage{amssymb}
 \usepackage{enumerate}
 \usepackage{longtable}
-
+\usepackage{tabularx}
 %Preambulo
 \title{Lenguajes de Programación \\ Tarea III}
 \author{Andrea Itzel González Vargas \\ Karla Esquivel Guzmán \\ Carlos Gerardo Acosta Hernández}
@@ -197,6 +197,77 @@ Sin embargo, este tipo de desventajas es para situaciones o circunstancias menos
 comparación con las ventajas que ofrece.
 
 \section*{Problema VI}
+\begin{center}
+  \subsection*{DSL - Lenguajes de Dominio Específico}
+  
+\begin{tabularx}{\textwidth}{X|X}
+	  \textbf{Ventajas} & \textbf{Desventajas} \\
+	\hline
+        \begin{itemize}
+        \item Permiten ofrecer soluciones expresadas en el mismo nivel de abstracción del dominio del problema.
+        \item Ofrecen una mayor oportunidad de extrapolación de un grupo desarrollador especializado en el dominio de algún sistema específico
+          que necesite actualizarse a un grupo desarrollador más general. Esto implica la siguiente ventaja.
+        \item Las herramientas de trabajo que provee el DSL permite que los desarrolladores tengan facilidad para introducirse o desenvolverse en el área del
+          dominio sin la necesidad de que se especialicen en ella.
+        \item Puesto que la semántica del lenguaje permanece limitada por el dominio, la aparición de errores de este tipo se mantiene
+          igualmente acotada. \end{itemize} &
+        \begin{itemize} \item El costo de aprender un nuevo lenguaje es grande si se considera el limitado universo de aplicaciones que tiene un DSL. 
+        \item Supone una dificultad mayor integrar las aplicaciones programadas en un DSL con otros componentes realizados con un lenguaje de
+          propósito general para algún sistema.
+        \item Los desarrolladores no expertos en el área a la que está orientado el dominio del lenguaje encontrarán dificultades para crear o
+          modificar código.
+        \item Esta baja oferta de expertos o conocedores de un DSL particular provocará un alza en la valoración monetaria, posiblemente desproporcionada respecto del esfuerzo real, del código escrito en dicho lenguaje. 
+        \end{itemize}  \\        
+\end{tabularx}
+\end{center}
+
+\begin{center}
+  \subsection*{GPL - Lenguajes de Propósito General}
+  \begin{tabularx}{\textwidth}{X|X}
+    \textbf{Ventajas} & \textbf{Desventajas} \\
+    \hline
+    \begin{itemize}
+    \item Se puede abarcar una gran cantidad de problemas de diversas áreas.
+    \item Suelen ser más fáciles de aprender para tareas generales y las soluciones que ofrecen suelen ser más fácilmente traducidas a otro GPL.
+    \item La cantidad de código ya escrito y disponible para el público es superior a los DSL por lo que se cuenta ya con una diversidad importante de bibliotecas y documentación que sirven de apoyo para el desarrollo. 
+    \end{itemize}
+    &
+    \begin{itemize}
+    \item Por la naturaleza general del dominio, puede que no sea la mejor opción para un problema de un dominio específico.
+    \item Por lo general están deprovistos de funcionalidades especializadas para un dominio particular, por lo que puede volverse más laboriosa la implementación de soluciones para problemas pertenecientes a un área específica. 
+    \item Debido a la diversidad de áreas en que son aplicables, la adquisición de un nivel de habilidad que cubra cualquier posibilidad para el
+      usuario de estos lenguajes es prácticamente imposible.
+    \end{itemize}\\
+  \end{tabularx}
+\end{center}
+
+\subsection*{Ejemplos DSL:}
+\begin{enumerate}
+\item Algol: Actualmente una familia de lenguajes de programación imperativos, fue desarrollado a mitad de la década de los años 50's principalmente como herramienta de investigación en las ciencias de la computación. Significó una gran influencia para muchos otros lenguajes de programación posteriores a su aparición y constituyó el método estándar de descripción de algoritmos utilizado en la academia por muchos años. Su nombre indica su fuerte orientación a la implementación de algoritmos (\textbf{Al}gorithm \textbf{L}anguage).
+\begin{verbatim}
+PROC factorial = (INT upb n)LONG LONG INT:(
+  LONG LONG INT z := 1;
+  FOR n TO upb n DO z *:= n OD;
+  z
+); ~
+\end{verbatim}
+  La versión iterativa de factorial implementada en \textit{Algol 68}.
+\item Lisp: A pesar de ser ahora una familia de lenguajes, su aparición en 1958 lo hace el segundo lenguaje de programación de alto nivel más viejo (después de Fortran). Lisp fue originalmente creado como una notación matemática pragmática para programas de computadora, influenciada en la notación del cálculo lambda. Su nombre refiere a procesamiento de listas (``list-processing'').
+\begin{verbatim}
+(defun list-reverse (L)
+  (if (null L)
+      nil
+    (list-append (list-reverse (rest L)) 
+                 (list (first L)))))
+\end{verbatim} 
+La función recursiva list-reverse recibe una lista L y devuelve una nueva lista con los elementos de L al revés.
+\item SQL: Es un lenguaje declarativo de acceso a bases de datos relacionales que permite especificar diversos tipos de operaciones en ellas.
+  Los orígenes de SQL están ligados a los de las bases de datos relacionales en los años 70's.
+\begin{verbatim}
+SELECT * FROM TABLE1;
+\end{verbatim}
+Esta consulta nos permite obtener todas las tuplas de la tabla TABLE1.
+\end{enumerate}
     
 \end{document}
  
