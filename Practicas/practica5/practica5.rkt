@@ -206,12 +206,17 @@
 (test (rinterp (cparse '{zero? 0})) (boolV #t))
 (test (rinterp (cparse '{num? false})) (boolV #f))
 (test (rinterp (cparse '{bool? true})) (boolV #t))
+(test (rinterp (cparse '{and {> 4 2} {>= 6 6}})) (boolV #t))
+
+(test (rinterp (cparse '{list? {with {{r 4}} {+ 3 r}}})) (boolV #f))
 (test (rinterp (cparse '{rest {lista 4 10 5}})) (MConsV (numV 10) (MConsV (numV 5) (MEmptyV))))
 (test (rinterp (cparse '{first {lista 4 (lista 10 5)}})) (numV 4))
 (test (rinterp (cparse '{empty? {lista }})) (boolV #t))
 (test (rinterp (cparse '{list? {lista }})) (boolV #t))
-(test (rinterp (cparse '{list? {with {{r 4}} {+ 3 r}}})) (boolV #f))
-(test (rinterp (cparse '{and {> 4 2} {>= 6 6}})) (boolV #t))
+(test (rinterp (cparse '{equal? (rest {lista 4 10 5 5 7 8}) (rest {lista 4 10 5 5 7 8})})) (boolV #t))
+(test (rinterp (cparse '{equal? (rest {lista 4 10 5 5 7 8}) (rest {lista 2 3 4 5 5 8})})) (boolV #f))
+(test (rinterp (cparse '{equal? (rest {lista 4 10 5}) {lista }})) (boolV #f))
+
 
 (test (rinterp (cparse true)) (boolV true))
 (test (rinterp (cparse false)) (boolV false))
