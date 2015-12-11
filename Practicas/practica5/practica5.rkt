@@ -24,15 +24,17 @@
     [(empty? lst) '()]
     [else (cons (desugar (bind-val (car lst))) (desugar-aux2 (cdr lst)))]))
     
-;; desugar : FAES -> FAE
-;; takes a FAES expression and transforms it into a FAE expression
+;; desugar : RCFAELS -> RCFAEL
+;; takes a RCFAELS expression and transforms it into a RCFAEL expression
 (define (desugar expr)
-  (type-case FAES expr
-   [MEmptyS () MEmpty]
+  (type-case RCFAELS expr
+   [MEmptyS () (MEmpty)]
    [MConsS (a b) (MCons (desugar a) (desugar b))]          
    [boolS (b) (bool b)]
    [IfS (c t e) (If (desugar c) (desugar t) (desugar e))]
    [isequal?S (e1 e2) (isequal? (desugar e1) (desugar e2))]
+   [opS (f e1) (op f (desugar e1))]
+   [recS (id e b) (rec id (desugar e) (desugar b))]
    [numS (n) (num n)]
    [withS (bind body)
           (app (fun (desugar-aux bind) (desugar body)) (desugar-aux2 bind))]
@@ -63,11 +65,26 @@
     [aSub (bound-name bound-value env)
           (if (symbol=? bound-name name)
               bound-value
-              (lookup name env))]))
+              (lookup name env))]
+    [aRecSub (bound-name boxed-value env)
+              (if (symbol=? bound-name name)
+                  (unbox boxed-value)
+                  (lookup name env))]))
 
 (define (binOp f l r)
-  (numV (f (numV-n l) (numV-n r))))
+   (cond
+    [(and (numV? l) (numV? r)) (f (numV-n l) (numV-n r))]
+    [(and (boolV? l) (boolV? r)) (f (boolV-b l) (boolV-b r))]
+    [else (error 'operandos "No es posible operar dos  tipos distintos con el procedimiento")]))
 
+
+(define (Op f s)
+  (cond
+    [(numV? s) (f (numV-n s))]
+    [(boolV? s) (f (boolV-b s))]
+    [(MEmptyV? s) (f (list))]
+    [(MConsV? s) (f (list (MConsV-f s) (MConsV-r s)))])
+  )
 
 ;; Seccion de auxiliares para manejar a las listas
 (define (isList? l)
@@ -100,13 +117,20 @@
     [(and (isList? e1) (isList? e2)) (idem e1 e2)]
     [else (error 'e "La aplicación de isequal? no es adecuada")]))
 
-
+;; cyclically-bind-and-interp : symbol RCFAE env → env
+(define (cyclically-bind-and-interp bound-id named-expr env)
+  (local ([define value-holder (box ( numV 1729 ))]
+          [define new-env (aRecSub bound-id value-holder env)]
+          [define named-expr-val (interp named-expr new-env)])
+         (begin
+           (set-box! value-holder named-expr-val)
+           new-env)))
 
 ;; interp : FAE -> FAE
 ;; evaluates FAE expressions by reducing them to their corresponding values
 ;; return values are either num or fun
 (define (interp expr env)
-  (type-case FAE expr
+  (type-case RCFAEL expr
              [num (n) (numV n)]
              [id (v) (lookup v env)]
              [fun (bound-ids bound-body)
@@ -117,12 +141,26 @@
                              (interp (closureV-body funv)
                                      (aux-env (closureV-param funv) args (closureV-env funv) env))
                              (error 'semantic "cannot apply arguments to an expression which is not a function")))]
-             [binop (f l r) (binOp f (interp l env) (interp r env) )]
+             [binop (f l r) (local ([define res (binOp f (interp l env) (interp r env))])
+                                   (cond
+                                     [(boolean? res) (boolV res)]
+                                     [(number? res) (numV res)]
+                                     [else (error 'wut "jijode su")]))]
              [bool (b) (boolV b)]
-             [If (c t e) (if (equal? (interp c) (boolV #t)) (interp t env) (interp e env))]
-             [MEmpty () MEmptyV]
+             [If (c t e) (if (equal? (interp c env) (boolV #t)) (interp t env) (interp e env))]
+             [MEmpty () (MEmptyV)]
              [MCons (f r) (MConsV (interp f env) (interp r env))]
              [isequal? (e1 e2) (boolV (compare (interp e1 env) (interp e2 env)))]
+             [op (f s) (local ([define res (Op f (interp s env))])
+                                   (cond
+                                     [(boolean? res) (boolV res)]
+                                     [(number? res) (numV res)]
+                                     [(list? res) (first res)]
+                                     [else res]))]
+             [rec (id expr body) (interp body
+                                  (cyclically-bind-and-interp id
+                                                              expr
+                                                              env))]
              ))
 
 
@@ -130,6 +168,8 @@
 (define (rinterp expr)
   (interp expr (mtSub)))
 
+
+;;;;;;;;;;;;;;;;;;; Tests practica 4 ;;;;;;;;;;;;;;;;
 (test (rinterp (cparse '3)) (numV 3))
 (test (rinterp (cparse '{+ 3 4})) (numV 7))
 (test (rinterp (cparse '{+ {- 3 4} 7})) (numV 6))
@@ -152,3 +192,76 @@
 (test (rinterp (cparse '{with* {{x 3} {y {+ 2 x}} {x 10} {z {+ x y}}} z})) (numV 15))
 (test/exn (rinterp (cparse '{with {{x 10} {x 20}} x})) "El id x está repetido")
 (test (rinterp (cparse '{with* {{x 10} {x 20}} x})) (numV 20))
+
+
+;;;;;;;;;;;;;;;;;;; Tests practica 5 ;;;;;;;;;;;;;;;;
+(test (rinterp (cparse '{if (< {+ 2 2} {* 2 2}) 1024 2048})) (numV 2048))
+(test (rinterp (cparse '{if (<= {+ 2 2} {* 2 2}) 1024 2048})) (numV 1024))
+(test (rinterp (cparse '{or true false})) (boolV #t))
+(test (rinterp (cparse '{equal? 4 5})) (boolV #f))
+(test (rinterp (cparse '{equal? 5 5})) (boolV #t))
+
+(test (rinterp (cparse '{inc 9})) (numV 10))
+(test (rinterp (cparse '{dec 10})) (numV 9))
+(test (rinterp (cparse '{zero? 0})) (boolV #t))
+(test (rinterp (cparse '{num? false})) (boolV #f))
+(test (rinterp (cparse '{bool? true})) (boolV #t))
+(test (rinterp (cparse '{and {> 4 2} {>= 6 6}})) (boolV #t))
+
+(test (rinterp (cparse '{list? {with {{r 4}} {+ 3 r}}})) (boolV #f))
+(test (rinterp (cparse '{rest {lista 4 10 5}})) (MConsV (numV 10) (MConsV (numV 5) (MEmptyV))))
+(test (rinterp (cparse '{first {lista 4 (lista 10 5)}})) (numV 4))
+(test (rinterp (cparse '{empty? {lista }})) (boolV #t))
+(test (rinterp (cparse '{list? {lista }})) (boolV #t))
+(test (rinterp (cparse '{equal? (rest {lista 4 10 5 5 7 8}) (rest {lista 4 10 5 5 7 8})})) (boolV #t))
+(test (rinterp (cparse '{equal? (rest {lista 4 10 5 5 7 8}) (rest {lista 2 3 4 5 5 8})})) (boolV #f))
+(test (rinterp (cparse '{equal? (rest {lista 4 10 5}) {lista }})) (boolV #f))
+
+
+(test (rinterp (cparse true)) (boolV true))
+(test (rinterp (cparse false)) (boolV false))
+(test (rinterp (cparse '(equal? 4 5))) (boolV false))
+(test (rinterp (cparse '(< 3 4))) (boolV true))
+(test (rinterp (cparse (< 4 3))) (boolV false))
+(test (rinterp (cparse (> 7 4))) (boolV true))
+(test (rinterp (cparse (> 2 3))) (boolV false))
+(test (rinterp (cparse (<= 3 3))) (boolV true))
+(test (rinterp (cparse (<= 4 5))) (boolV true))
+(test (rinterp (cparse (>= 3 3))) (boolV true))
+(test (rinterp (cparse (>= 9 5))) (boolV true))
+(test (rinterp (cparse {+ 3 4})) (numV 7))
+(test (rinterp (cparse {- 4 3})) (numV 1))
+(test (rinterp (cparse {* 4 3})) (numV 12))
+(test (rinterp (cparse {/ 8 4})) (numV 2))
+(test (rinterp (cparse {add1 1})) (numV 2))
+(test (rinterp (cparse {sub1 1})) (numV 0))
+(test (rinterp (cparse {sub1 1})) (numV 0))
+(test (rinterp (cparse {zero? 0})) (boolV true))
+(test (rinterp (cparse {zero? 2})) (boolV false))
+(test (rinterp (cparse {num? (num 9)})) (boolV true))
+(test (rinterp (cparse {not false})) (boolV true))
+(test (rinterp (cparse {not true})) (boolV false))
+(test (rinterp (cparse {boolean? true})) (boolV true))
+(test (rinterp (cparse {first '(1,2)})) (numV 1))
+(test (rinterp (cparse {empty? '(1,2)})) (boolV false))
+(test (rinterp (cparse {list? '(1,2)})) (boolV true))
+
+(test (rinterp (cparse '{rec (fac (fun (n) (if (zero? n)
+                                   1
+                                   (* n (fac (dec n)))
+                                   ))) (fac 3)})) (numV 6))
+(test (rinterp (cparse '{rec (fac (fun (n) (if (zero? n)
+                                   1
+                                   (* n (fac (dec n)))
+                                   ))) (fac 10)})) (numV 3628800))
+
+(test (rinterp (cparse '{rec (fib (fun (n)
+                                       (if (<= n 1)
+                                           n
+                                           (+ (fib (- n 1)) (fib (- n 2)))))) (fib 6)} )) (numV 8))
+(test (rinterp (cparse '{rec (fib (fun (n)
+                                       (if (<= n 1)
+                                           n
+                                           (+ (fib (- n 1)) (fib (- n 2)))))) (fib 17)} )) (numV 1597))
+
+
