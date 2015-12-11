@@ -16,3 +16,5 @@
 	     <vertice origen> --<peso>--> <vertice destino> *Si la grafica es dirigida
 	     
 	 Ciclos? = <False o True> *Tiene o no ciclos la grafica
+
+####Usar Python 2
