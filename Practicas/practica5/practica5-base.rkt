@@ -18,6 +18,8 @@
   [boolS (b boolean?)]
   [IfS (c FAES?) (t FAES?) (e FAES?)]
   [isequal?S (e1 FAES?) (e2 FAES?)]
+  [opS (f procedure?) (s FAES?)]
+  [recS (id symbol?) (expr FAES?) (body FAES?)]
   [numS (n number?)]
   [withS (bindings (listof bind?))
          (body FAES?)]
@@ -40,6 +42,8 @@
   [If (c FAE?) (t FAE?) (e FAE?)]
   [bool (b boolean?)]
   [isequal? (e1 FAE?) (e2 FAE?)]
+  [op (f procedure?) (s FAE?)]
+  [rec (id symbol?) (expr FAE?) (body FAE?)]
   [num (n number?)]
   [id (name symbol?)]
   [fun (params (listof symbol?))
@@ -66,7 +70,14 @@
   [mtSub]
   [aSub (name symbol?) 
         (value FAE-Value?) 
-        (env Env?)])
+        (env Env?)]
+  [aRecSub (name symbol?)
+           (val in-box?)
+           (env Env?)])
+
+(define (in-box? v)
+  (and (box? v)
+       (FAE-Value? (unbox v))))
 
 ; FUNCIONES AUXILIARES
 
@@ -82,12 +93,31 @@
         (map (lambda (b) (bind (car b) (parse (cadr b)))) lst)
         (error 'parse-bindings (string-append "El id " (symbol->string (car bindRep)) " está repetido")))))
 
+(define (elige-un s)
+  (case s
+    [(inc) add1]
+    [(dec) sub1]
+    [(zero?) zero?]
+    [(num?) num?]
+    [(neg) not]
+    [(bool?)  boolean?]
+    [(first) first]
+    [(rest) rest]
+    [(empty?) empty?]
+    [(list?) list?]))
+
 (define (elige s)
   (case s
     [(+) +]
     [(-) -]
     [(*) *]
-    [(/) /]))
+    [(/) /]
+    [(<) <]
+    [(>) >]
+    [(<=) <=]
+    [(>=) >=]
+    [(and) (lambda (x y) (and x y))]
+    [(or) (lambda (x y) (or x y))]))
   
 ;; buscaRepetido: listof(X) (X X -> boolean) -> X
 ;; Dada una lista, busca repeticiones dentro de la misma
@@ -110,24 +140,31 @@
     [(comparador (car l) x) #t]
     [else (member? x (cdr l) comparador)]))
 
+(define (parseL l)
+  (cond
+    [(empty? (cdr l)) (MConsS (parse (car l)) (MEmptyS))]
+    [else (MConsS (parse (car l)) (parseL (cdr l)))]))
+
 ;; A::= <number>|<symbol>|listof(<A>)
 ;; parse: A -> FAES
 (define (parse sexp)
   (cond
+    [(equal? sexp 'true) (boolS #t)]
+    [(equal? sexp 'false) (boolS #f)]
     [(symbol? sexp) (idS sexp)]
     [(number? sexp) (numS sexp)]
-    [(boolean? sexp) (boolS sexp)] ;; nuevo
+    [(boolean? sexp) (boolS sexp)];; nuevo
     [(list? sexp)
      (case (car sexp)
-       [(if) (If (parse (cdr sexp)) (parse (cddr sexp)) (parse (cdddr sexp)))] ;; nuevo
-       [(equal?) (isequal?S (parse (cdr sexp)) (cddr sexp))]
-       [(list) (if (empty? (cdr sexp))
-                           MEmptyS
-                           (if (empty? (cddr sexp))
-                           (MConsS (parse (cdr sexp)) (MEmptyS))    
-                           (MCons (parse (cdr sexp)) (parse (cddr sexp)))))]
+       [(if) (IfS (parse (cadr sexp)) (parse (caddr sexp)) (parse (cadddr sexp)))] ;; nuevo
+       [(equal?) (isequal?S (parse (cadr sexp)) (parse (caddr sexp)))]
+       [(lista) (if (empty? (cdr sexp))
+                           (MEmptyS)    
+                           (MConsS (parse (cadr sexp)) (parseL (cddr sexp))))]
+       [(inc dec zero? num? neg bool? first rest empty? list?) (opS (elige-un (car sexp)) (parse (cadr sexp)))]
        [(with) (withS (parse-bindings (cadr sexp) #f) (parse (caddr sexp)))]
        [(with*) (with*S (parse-bindings (cadr sexp) #t) (parse (caddr sexp)))]
        [(fun) (funS (cadr sexp) (parse (caddr sexp)))]
-       [(+ - / *) (binopS (elige (car sexp)) (parse (cadr sexp)) (parse (caddr sexp)))]
+       [(+ - / * > < <= >= and or) (binopS (elige (car sexp)) (parse (cadr sexp)) (parse (caddr sexp)))]
+       [(rec) (recS (caadr sexp) (parse (cadadr sexp)) (parse (caddr sexp)))]
        [else (appS (parse (car sexp)) (map parse (cdr sexp)))])]))
