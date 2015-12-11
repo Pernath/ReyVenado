@@ -24,10 +24,10 @@
     [(empty? lst) '()]
     [else (cons (desugar (bind-val (car lst))) (desugar-aux2 (cdr lst)))]))
     
-;; desugar : FAES -> FAE
-;; takes a FAES expression and transforms it into a FAE expression
+;; desugar : RCFAELS -> RCFAEL
+;; takes a RCFAELS expression and transforms it into a RCFAEL expression
 (define (desugar expr)
-  (type-case FAES expr
+  (type-case RCFAELS expr
    [MEmptyS () (MEmpty)]
    [MConsS (a b) (MCons (desugar a) (desugar b))]          
    [boolS (b) (bool b)]
@@ -130,7 +130,7 @@
 ;; evaluates FAE expressions by reducing them to their corresponding values
 ;; return values are either num or fun
 (define (interp expr env)
-  (type-case FAE expr
+  (type-case RCFAEL expr
              [num (n) (numV n)]
              [id (v) (lookup v env)]
              [fun (bound-ids bound-body)

@@ -1,75 +1,75 @@
 #lang plai
 
 (define-type Binding
-  [bind (name symbol?) (val FAES?)])
+  [bind (name symbol?) (val RCFAELS?)])
 
 ;(define-type MyListS
 ;  [Mempty]
-; [Mcons (expr FAES?) (expr2 FAES?)])
+; [Mcons (expr RCFAELS?) (expr2 RCFAELS?)])
 
 ;(define-type MyList
 ;  [Mempty]
-;  [Mcons (expr FAE?) (expr2 FAE?)])
+;  [Mcons (expr RCFAEL?) (expr2 RCFAEL?)])
 
 
-(define-type FAES
+(define-type RCFAELS
   [MEmptyS]
-  [MConsS (expr FAES?) (expr2 FAES?)]
+  [MConsS (expr RCFAELS?) (expr2 RCFAELS?)]
   [boolS (b boolean?)]
-  [IfS (c FAES?) (t FAES?) (e FAES?)]
-  [isequal?S (e1 FAES?) (e2 FAES?)]
-  [opS (f procedure?) (s FAES?)]
-  [recS (id symbol?) (expr FAES?) (body FAES?)]
+  [IfS (c RCFAELS?) (t RCFAELS?) (e RCFAELS?)]
+  [isequal?S (e1 RCFAELS?) (e2 RCFAELS?)]
+  [opS (f procedure?) (s RCFAELS?)]
+  [recS (id symbol?) (expr RCFAELS?) (body RCFAELS?)]
   [numS (n number?)]
   [withS (bindings (listof bind?))
-         (body FAES?)]
+         (body RCFAELS?)]
   [with*S (bindings (listof bind?))
-          (body FAES?)]
+          (body RCFAELS?)]
   [idS (name symbol?)]
   [funS (params (listof symbol?))
-        (body FAES?)]
-  [appS (fun FAES?)
-        (args (listof FAES?))]
+        (body RCFAELS?)]
+  [appS (fun RCFAELS?)
+        (args (listof RCFAELS?))]
   [binopS (f procedure?)
-         (l FAES?)
-         (r FAES?)])
+         (l RCFAELS?)
+         (r RCFAELS?)])
 
 
-(define-type FAE
+(define-type RCFAEL
   ;[MList (l MyList?)]
   [MEmpty]
-  [MCons (expr FAE?) (expr2 FAE?)]
-  [If (c FAE?) (t FAE?) (e FAE?)]
+  [MCons (expr RCFAEL?) (expr2 RCFAEL?)]
+  [If (c RCFAEL?) (t RCFAEL?) (e RCFAEL?)]
   [bool (b boolean?)]
-  [isequal? (e1 FAE?) (e2 FAE?)]
-  [op (f procedure?) (s FAE?)]
-  [rec (id symbol?) (expr FAE?) (body FAE?)]
+  [isequal? (e1 RCFAEL?) (e2 RCFAEL?)]
+  [op (f procedure?) (s RCFAEL?)]
+  [rec (id symbol?) (expr RCFAEL?) (body RCFAEL?)]
   [num (n number?)]
   [id (name symbol?)]
   [fun (params (listof symbol?))
-       (body FAE?)]
-  [app (fun FAE?)
-       (args (listof FAE?))]
+       (body RCFAEL?)]
+  [app (fun RCFAEL?)
+       (args (listof RCFAEL?))]
   [binop (f procedure?)
-         (l FAE?)
-         (r FAE?)])
+         (l RCFAEL?)
+         (r RCFAEL?)])
 
 
   
 
-(define-type FAE-Value
+(define-type RCFAEL-Value
   [numV (n number?)]
   [boolV (b boolean?)]
   [MEmptyV]
-  [MConsV (f FAE-Value?) (r FAE-Value?)]
+  [MConsV (f RCFAEL-Value?) (r RCFAEL-Value?)]
   [closureV (param (listof symbol?))
-            (body FAE?)
+            (body RCFAEL?)
             (env Env?)])
 
 (define-type Env
   [mtSub]
   [aSub (name symbol?) 
-        (value FAE-Value?) 
+        (value RCFAEL-Value?) 
         (env Env?)]
   [aRecSub (name symbol?)
            (val in-box?)
@@ -77,7 +77,7 @@
 
 (define (in-box? v)
   (and (box? v)
-       (FAE-Value? (unbox v))))
+       (RCFAEL-Value? (unbox v))))
 
 ; FUNCIONES AUXILIARES
 
@@ -146,7 +146,7 @@
     [else (MConsS (parse (car l)) (parseL (cdr l)))]))
 
 ;; A::= <number>|<symbol>|listof(<A>)
-;; parse: A -> FAES
+;; parse: A -> RCFAELS
 (define (parse sexp)
   (cond
     [(equal? sexp 'true) (boolS #t)]
