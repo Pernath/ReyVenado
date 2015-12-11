@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE graph PUBLIC "-//FC//DTD matrix//EN" "./graph.dtd">
+<graph direct="1">
+  <vertex label="a"/>
+  <vertex label="b"/>	
+  <vertex label="c"/>
+  <vertex label="d"/>
+  <vertex label="e"/>
+  <vertex label="f"/>
+  <vertex label="g"/>
+  <vertex label="h"/>
+  <vertex label="i"/>
+  <vertex label="j"/>
+  <edge source="a" target="b" weight="11"/>
+  <edge source="b" target="c" weight="1"/>
+  <edge source="c" target="d" weight="4"/>
+  <edge source="d" target="e" weight="8"/>
+  <edge source="d" target="f" weight="8"/>
+  <edge source="e" target="g" weight="3"/>
+  <edge source="f" target="h" weight="3"/>
+  <edge source="g" target="i" weight="3"/>
+  <edge source="h" target="j" weight="2"/>
+</graph>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Graph.dtd - Definición de un archivo de entrada para -->
+<!-- generar una gráfica.                                 -->
+<!-- Daniel Estévez Fuentes (dan(at)ciencias.unam.mx)     -->
+
+<!-- Una gráfica es un conjunto de vértices y aristas.    -->
+<!ELEMENT graph (vertex+, edge+)>
+
+<!-- graph tiene como atributo a direct, que indica si la -->
+<!-- gráfica será (1) o no (0) dirigida.                  -->
+<!ATTLIST graph direct CDATA #REQUIRED>
+
+<!-- vertex es un elemento vacio.                         -->
+<!ELEMENT vertex EMPTY>
+
+<!-- vertex tiene como atributo único la etiqueta que le  -->
+<!-- asignaremos(label), la cual es única.                -->
+<!ATTLIST vertex label CDATA #REQUIRED>
+
+
+
+<!-- edge es un elemento vacio                            -->
+<!ELEMENT edge EMPTY>
+
+<!-- edge tiene como atributos: la etiqueta del vértice   -->
+<!-- de origen(source), la etiqueta del vértice de destino-->
+<!-- (target), y el  peso del vértice(weight).            -->
+<!ATTLIST edge source CDATA #REQUIRED>
+<!ATTLIST edge target CDATA #REQUIRED>
+<!ATTLIST edge weight CDATA #REQUIRED>
