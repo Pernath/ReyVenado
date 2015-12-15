@@ -52,3 +52,13 @@ Problema 3: Muy bien, solo quisiera que pensaran en el caso de que lugar de regr
 Problema 4: Muy bien simple y directo.
 
 **Calificación: 10**
+
+### Tarea 3
+Problema I: Bien
+Problema II: Muy bien
+Problema III: Muy bien
+Problema IV: Bien
+Problema V: Bien
+Problema VI: Hubiera sido mejor ejemplos mas actuales.
+
+**Calificación: 10**
