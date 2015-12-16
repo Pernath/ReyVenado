@@ -30,6 +30,18 @@ Muy bien, el desugar se podia hacer sin tanta funcion auxiliar pero muy bien.
 
 **Calificación: 10**
 
+### Practica 5
+
+Falto hacer la implementación de recursion por medio de procedimientos.
+
+**Calificación: 8** Por entrega fuera de tiempo
+
+### Practica 6
+
+Hizo falta hacer mas explicito el uso de polimorfismo entre Graph y DGraph.
+
+**Calificación: 8** Por entrega fuera de tiempo
+
 ## Tareas
 
 ### Tarea 1
