@@ -5,7 +5,7 @@ Repositorio colectivo de prácticas de laboratorio de Lenguajes de Programación
 	karlycaramelo93@ciencias.unam.mx
 	311156357
 ####Carlos Acosta
-	[carlos-acosta@ciencias.unam.mx](https://www.google.com)
+	[Google](https://www.google.com)
 	311154243
 ####Andrea González
 	andreagonz@ciencias.unam.mx	
